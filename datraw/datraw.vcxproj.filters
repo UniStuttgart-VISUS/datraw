@@ -21,6 +21,9 @@
     <ClCompile Include="variant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="info.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\datraw.h">

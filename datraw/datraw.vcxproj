@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="datraw.cpp" />
+    <ClCompile Include="info.cpp" />
     <ClCompile Include="variant.cpp" />
   </ItemGroup>
   <ItemGroup>
