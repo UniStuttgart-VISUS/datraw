@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 #include "datraw/api.h"
 #include "datraw/types.h"

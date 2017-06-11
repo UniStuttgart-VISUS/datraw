@@ -1,3 +1,4 @@
+#ifdef _WIN32
 #include <windows.h>
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved) {
@@ -11,3 +12,4 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved) {
             break;
     }
 }
+#endif /* _WIN32 */

@@ -24,8 +24,4 @@ namespace datraw {
     typedef float float32;
     typedef double float64;
 
-    enum class endianness {
-        little = 1,
-        big
-    };
 }

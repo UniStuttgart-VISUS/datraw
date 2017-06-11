@@ -156,16 +156,20 @@
   <ItemGroup>
     <ClCompile Include="datraw.cpp" />
     <ClCompile Include="info.cpp" />
+    <ClCompile Include="endianness.cpp" />
     <ClCompile Include="variant.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\datraw.h" />
     <ClInclude Include="include\datraw\api.h" />
+    <ClInclude Include="include\datraw\scalar_type.h" />
+    <ClInclude Include="include\datraw\endianness.h" />
     <ClInclude Include="include\datraw\info.h" />
     <ClInclude Include="include\datraw\types.h" />
     <ClInclude Include="include\datraw\variant.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="include\datraw\info.inl" />
     <None Include="include\datraw\variant.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

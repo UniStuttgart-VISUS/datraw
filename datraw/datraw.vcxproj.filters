@@ -24,6 +24,9 @@
     <ClCompile Include="info.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="endianness.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\datraw.h">
@@ -41,9 +44,18 @@
     <ClInclude Include="include\datraw\info.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\datraw\endianness.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\datraw\scalar_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\datraw\variant.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="include\datraw\info.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
