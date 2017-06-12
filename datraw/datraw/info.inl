@@ -13,17 +13,17 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
         string_type Tag;
         scalar_type Value;
     } SCALAR_TYPES[] = {
-        { "CHAR", scalar_type::int8 },
-        { "UCHAR", scalar_type::uint8 },
-        { "SHORT", scalar_type::int16 },
-        { "USHORT", scalar_type::uint16 },
-        { "INT", scalar_type::int32 },
-        { "UINT", scalar_type::uint32 },
-        { "LONG", scalar_type::int64 },
-        { "ULONG", scalar_type::uint64 },
-        { "HALF", scalar_type::float16 },
-        { "FLOAT", scalar_type::float32 },
-        { "DOUBLE", scalar_type::float64 }
+        { DATRAW_TPL_LITERAL(C, "CHAR"), scalar_type::int8 },
+        { DATRAW_TPL_LITERAL(C, "UCHAR"), scalar_type::uint8 },
+        { DATRAW_TPL_LITERAL(C, "SHORT"), scalar_type::int16 },
+        { DATRAW_TPL_LITERAL(C, "USHORT"), scalar_type::uint16 },
+        { DATRAW_TPL_LITERAL(C, "INT"), scalar_type::int32 },
+        { DATRAW_TPL_LITERAL(C, "UINT"), scalar_type::uint32 },
+        { DATRAW_TPL_LITERAL(C, "LONG"), scalar_type::int64 },
+        { DATRAW_TPL_LITERAL(C, "ULONG"), scalar_type::uint64 },
+        { DATRAW_TPL_LITERAL(C, "HALF"), scalar_type::float16 },
+        { DATRAW_TPL_LITERAL(C, "FLOAT"), scalar_type::float32 },
+        { DATRAW_TPL_LITERAL(C, "DOUBLE"), scalar_type::float64 }
     };
     static const struct {
         string_type Tag;
@@ -53,7 +53,8 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
     /* Parse the dat file. */
     auto lines = info::tokenise(content.cbegin(), content.cend(), true,
         DATRAW_TPL_LITERAL(C, '\r'), DATRAW_TPL_LITERAL(C, '\n'));
-    for (int i = 0; i < lines.size() - 1; ++i) {
+    assert(lines.size() <= static_cast<size_t>(INT_MAX));
+    for (int i = 0; i < static_cast<int>(lines.size()) - 1; ++i) {
         auto b = info::skip_spaces(lines[i], lines[i + 1]);
         auto e = lines[i + 1];
 
@@ -97,15 +98,7 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
  *     SLICETHICKNESS  - size of the grid cells in each direction/dimension *
  *                       (M float values, (dX dY dZ ...)         
             */
-            /*
-            datRawGridTypes[] = {
-    {"EQUIDISTANT", DR_GRID_CARTESIAN},
-    {"CARTESIAN", DR_GRID_CARTESIAN},
-    {"UNIFORM", DR_GRID_CARTESIAN},
-    {"RECTILINEAR", DR_GRID_RECTILINEAR},
-    {"TETRAHEDRA", DR_GRID_TETRAHEDRAL}
-};
-            */
+
             retval.properties[key] = string_type(value, e);
         }
     }
