@@ -1,0 +1,70 @@
+﻿  stdafx.cpp
+t:\programmcode\datraw2\datraw\datraw\variant.h(223): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(224): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(225): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(226): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(227): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(228): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(229): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(230): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(231): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(232): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(233): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(234): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(235): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(236): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw\variant.h(237): warning C4010: single-line comment contains line-continuation character
+  variant.cpp
+t:\programmcode\datraw2\datraw\datraw\variant.h(475): error C2039: 'get': is not a member of 'datraw::detail::variant_rev_traits<C,T>'
+          with
+          [
+              C=char,
+              T=bool
+          ]
+  t:\programmcode\datraw2\datraw\datraw\variant.h(205): note: see declaration of 'datraw::detail::variant_rev_traits<C,T>'
+          with
+          [
+              C=char,
+              T=bool
+          ]
+  t:\programmcode\datraw2\test\variant.cpp(26): note: see reference to function template instantiation 'const T &datraw::basic_variant<char>::get<bool>(void) const' being compiled
+          with
+          [
+              T=bool
+          ]
+  t:\programmcode\datraw2\test\variant.cpp(26): note: see reference to function template instantiation 'const T &datraw::basic_variant<char>::get<bool>(void) const' being compiled
+          with
+          [
+              T=bool
+          ]
+t:\programmcode\datraw2\datraw\datraw\variant.h(475): error C2672: 'datraw::basic_variant<char>::get': no matching overloaded function found
+t:\programmcode\datraw2\datraw\datraw\variant.h(475): error C2780: 'const T &datraw::basic_variant<char>::get(void) const': expects 0 arguments - 1 provided
+  t:\programmcode\datraw2\datraw\datraw\variant.h(472): note: see declaration of 'datraw::basic_variant<char>::get'
+t:\programmcode\datraw2\datraw\datraw\variant.h(475): error C2780: 'const variant_fwd_traits<C,T>::type &datraw::basic_variant<C>::get(void) const': expects 0 arguments - 1 provided
+          with
+          [
+              C=char
+          ]
+  t:\programmcode\datraw2\datraw\datraw\variant.h(456): note: see declaration of 'datraw::basic_variant<char>::get'
+t:\programmcode\datraw2\datraw\datraw\variant.h(475): error C2039: 'get': is not a member of 'datraw::detail::variant_rev_traits<C,T>'
+          with
+          [
+              C=char,
+              T=datraw::int8
+          ]
+  t:\programmcode\datraw2\datraw\datraw\variant.h(205): note: see declaration of 'datraw::detail::variant_rev_traits<C,T>'
+          with
+          [
+              C=char,
+              T=datraw::int8
+          ]
+  t:\programmcode\datraw2\test\variant.cpp(33): note: see reference to function template instantiation 'const T &datraw::basic_variant<char>::get<datraw::int8>(void) const' being compiled
+          with
+          [
+              T=datraw::int8
+          ]
+  t:\programmcode\datraw2\test\variant.cpp(33): note: see reference to function template instantiation 'const T &datraw::basic_variant<char>::get<datraw::int8>(void) const' being compiled
+          with
+          [
+              T=datraw::int8
+          ]

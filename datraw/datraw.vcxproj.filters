@@ -15,47 +15,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="datraw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="variant.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="info.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="endianness.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\datraw.h">
+    <ClInclude Include="datraw\endianness.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\datraw\variant.h">
+    <ClInclude Include="datraw\info.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\datraw\types.h">
+    <ClInclude Include="datraw\scalar_type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\datraw\api.h">
+    <ClInclude Include="datraw\types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\datraw\info.h">
+    <ClInclude Include="datraw\variant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\datraw\endianness.h">
+    <ClInclude Include="datraw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\datraw\scalar_type.h">
+    <ClInclude Include="datraw\literal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="include\datraw\variant.inl">
+    <None Include="datraw\info.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="include\datraw\info.inl">
+    <None Include="datraw\variant.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

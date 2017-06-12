@@ -1,0 +1,8 @@
+﻿  t.cpp
+t:\programmcode\datraw2\datraw\datraw\info.inl(20): warning C4244: 'argument': conversion from 'std::streamoff' to 'unsigned int', possible loss of data
+  t:\programmcode\datraw2\datraw\datraw\info.inl(11): note: while compiling class template member function 'datraw::info<char> datraw::info<char>::parse(const std::basic_string<char,std::char_traits<char>,std::allocator<char>> &)'
+  t:\programmcode\datraw2\t\t.cpp(9): note: see reference to function template instantiation 'datraw::info<char> datraw::info<char>::parse(const std::basic_string<char,std::char_traits<char>,std::allocator<char>> &)' being compiled
+  t:\programmcode\datraw2\t\t.cpp(9): note: see reference to class template instantiation 'datraw::info<char>' being compiled
+t:\programmcode\datraw2\datraw\datraw\info.inl(29): warning C4018: '<': signed/unsigned mismatch
+  t.vcxproj -> T:\Programmcode\datraw2\Debug\t.exe
+  t.vcxproj -> T:\Programmcode\datraw2\Debug\t.pdb (Full PDB)

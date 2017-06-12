@@ -1,0 +1,39 @@
+﻿  datraw.cpp
+  info.cpp
+t:\programmcode\datraw2\datraw\datraw/variant.h(223): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(224): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(225): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(226): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(227): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(228): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(229): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(230): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(231): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(232): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(233): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(234): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(235): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(236): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(237): warning C4010: single-line comment contains line-continuation character
+  endianness.cpp
+  variant.cpp
+t:\programmcode\datraw2\datraw\datraw/variant.h(223): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(224): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(225): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(226): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(227): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(228): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(229): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(230): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(231): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(232): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(233): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(234): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(235): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(236): warning C4010: single-line comment contains line-continuation character
+t:\programmcode\datraw2\datraw\datraw/variant.h(237): warning C4010: single-line comment contains line-continuation character
+  Generating code
+  All 121 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  datraw.vcxproj -> T:\Programmcode\datraw2\x64\Release\datraw.dll
+  datraw.vcxproj -> T:\Programmcode\datraw2\x64\Release\datraw.pdb (Full PDB)
