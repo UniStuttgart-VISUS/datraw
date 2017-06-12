@@ -23,7 +23,10 @@
 
 #include <wchar.h>
 
+#include "datraw/endianness.h"
+#include "datraw/grid_type.h"
 #include "datraw/literal.h"
+#include "datraw/scalar_type.h"
 #include "datraw/types.h"
 
 
@@ -160,7 +163,13 @@ namespace datraw {
         /// <summary>
         // A vector of unsigned 64-bit floats.
         /// </summary>
-        vec_float64
+        vec_float64,
+
+        scalar_type,
+
+        grid_type,
+
+        endianness
 
         // Add new members here.
     };
@@ -205,6 +214,9 @@ namespace detail {
         std::vector<std::uint64_t> val_vec_uint64;
         std::vector<float> val_vec_float32;
         std::vector<double> val_vec_float64;
+        datraw::scalar_type val_scalar_type;
+        datraw::grid_type val_grid_type;
+        datraw::endianness val_endianness;
         // Add new members here (must be val_[variant_type name]).
 
         inline variant(void) { }
@@ -233,7 +245,9 @@ namespace detail {
         variant_type::vec_int32, variant_type::vec_int64,
         variant_type::vec_uint8, variant_type::vec_uint16,
         variant_type::vec_uint32, variant_type::vec_uint64,
-        variant_type::vec_float32, variant_type::vec_float64
+        variant_type::vec_float32, variant_type::vec_float64,
+        variant_type::scalar_type, variant_type::grid_type,
+        variant_type::endianness
         /* Add new members here. */>
         variant_type_list;
 
@@ -335,6 +349,9 @@ namespace detail {
     __DATRAW_DECL_VARIANT_TRAITS(vec_uint64);
     __DATRAW_DECL_VARIANT_TRAITS(vec_float32);
     __DATRAW_DECL_VARIANT_TRAITS(vec_float64);
+    __DATRAW_DECL_VARIANT_TRAITS(scalar_type);
+    __DATRAW_DECL_VARIANT_TRAITS(grid_type);
+    __DATRAW_DECL_VARIANT_TRAITS(endianness);
     // Add new specialisations here here.
 
 #undef __DATRAW_DECL_VARIANT_TRAITS

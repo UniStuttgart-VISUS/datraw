@@ -9,6 +9,42 @@
  */
 template<class C>
 datraw::info<C> datraw::info<C>::parse(const string_type& file) {
+    static const string_type EMPTY_STRING(DATRAW_TPL_LITERAL(C, ""));
+    static const struct {
+        string_type Tag;
+        endianness Value;
+    } ENDIANNESSES[] = {
+        { DATRAW_TPL_LITERAL(C, "BIG_ENDIAN"), endianness::big },
+        { DATRAW_TPL_LITERAL(C, "LITTLE_ENDIAN"), endianness::little },
+    };
+    static const struct {
+        string_type Tag;
+        grid_type Value;
+    } GRID_TYPES[] = {
+        { DATRAW_TPL_LITERAL(C, "EQUIDISTANT"), grid_type::cartesian },
+        { DATRAW_TPL_LITERAL(C, "CARTESIAN"), grid_type::cartesian },
+        { DATRAW_TPL_LITERAL(C, "UNIFORM"), grid_type::cartesian },
+        { DATRAW_TPL_LITERAL(C, "RECTILINEAR"), grid_type::rectilinear },
+        { DATRAW_TPL_LITERAL(C, "TETRAHEDRA"), grid_type::tetrahedral }
+    };
+    static const struct {
+        string_type Name;
+        variant_type DefaultValue;
+    } KNOWN_PROPERTIES[] = {
+        { DATRAW_TPL_LITERAL(C, "OBJECTFILENAME"), variant_type() },
+        { DATRAW_TPL_LITERAL(C, "FORMAT"), variant_type(scalar_type::raw) },
+        { DATRAW_TPL_LITERAL(C, "GRIDTYPE"), variant_type(grid_type::cartesian) },
+        { DATRAW_TPL_LITERAL(C, "COMPONENTS"), variant_type(1) },
+        { DATRAW_TPL_LITERAL(C, "DIMENSIONS"), variant_type(3) },
+        { DATRAW_TPL_LITERAL(C, "TIMESTEPS"), variant_type(1) },
+        { DATRAW_TPL_LITERAL(C, "BYTEORDER"), variant_type(endianness::little) },
+        { DATRAW_TPL_LITERAL(C, "DATAOFFSET"), variant_type(0) },
+        { DATRAW_TPL_LITERAL(C, "RESOLUTION"), variant_type(std::vector<std::uint32_t>()) },    // if (!(info->resolution = (int*)malloc(info->dimensions * sizeof(int)))) {
+        { DATRAW_TPL_LITERAL(C, "SLICETHICKNESS"), variant_type(std::vector<std::uint32_t>()) },
+        { DATRAW_TPL_LITERAL(C, "ORIGIN"), variant_type(std::vector<std::uint32_t>()) },
+        { DATRAW_TPL_LITERAL(C, "VERTICES"), variant_type(0) },
+        { DATRAW_TPL_LITERAL(C, "TETRAHEDRA"), variant_type(0) },
+    };
     static const struct {
         string_type Tag;
         scalar_type Value;
@@ -24,16 +60,6 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
         { DATRAW_TPL_LITERAL(C, "HALF"), scalar_type::float16 },
         { DATRAW_TPL_LITERAL(C, "FLOAT"), scalar_type::float32 },
         { DATRAW_TPL_LITERAL(C, "DOUBLE"), scalar_type::float64 }
-    };
-    static const struct {
-        string_type Tag;
-        grid_type Value;
-    } GRID_TYPES[] = {
-        { DATRAW_TPL_LITERAL(C, "EQUIDISTANT"), grid_type::cartesian },
-        { DATRAW_TPL_LITERAL(C, "CARTESIAN"), grid_type::cartesian },
-        { DATRAW_TPL_LITERAL(C, "UNIFORM"), grid_type::cartesian },
-        { DATRAW_TPL_LITERAL(C, "RECTILINEAR"), grid_type::rectilinear },
-        { DATRAW_TPL_LITERAL(C, "TETRAHEDRA"), grid_type::tetrahedral }
     };
 
     string_type content;
@@ -51,7 +77,7 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
     }
 
     /* Parse the dat file. */
-    auto lines = info::tokenise(content.cbegin(), content.cend(), true,
+    auto lines = info::tokenise(content.cbegin(), content.cend(),
         DATRAW_TPL_LITERAL(C, '\r'), DATRAW_TPL_LITERAL(C, '\n'));
     assert(lines.size() <= static_cast<size_t>(INT_MAX));
     for (int i = 0; i < static_cast<int>(lines.size()) - 1; ++i) {

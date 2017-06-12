@@ -94,6 +94,13 @@ namespace datraw {
         /// </summary>
         inline info(void) { }
 
+        /// <summary>
+        /// Performs a sanity check of the objects content.
+        /// </summary>
+        /// <exception cref="std::runtime_error">In case something is wrong with
+        /// the content of the object.</exception>
+        //void check(void) const;
+
     private:
 
         /// <summary>
