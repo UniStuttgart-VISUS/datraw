@@ -9,6 +9,33 @@
  */
 template<class C>
 datraw::info<C> datraw::info<C>::parse(const string_type& file) {
+    static const struct {
+        string_type Tag;
+        scalar_type Value;
+    } SCALAR_TYPES[] = {
+        { "CHAR", scalar_type::int8 },
+        { "UCHAR", scalar_type::uint8 },
+        { "SHORT", scalar_type::int16 },
+        { "USHORT", scalar_type::uint16 },
+        { "INT", scalar_type::int32 },
+        { "UINT", scalar_type::uint32 },
+        { "LONG", scalar_type::int64 },
+        { "ULONG", scalar_type::uint64 },
+        { "HALF", scalar_type::float16 },
+        { "FLOAT", scalar_type::float32 },
+        { "DOUBLE", scalar_type::float64 }
+    };
+    static const struct {
+        string_type Tag;
+        grid_type Value;
+    } GRID_TYPES[] = {
+        { DATRAW_TPL_LITERAL(C, "EQUIDISTANT"), grid_type::cartesian },
+        { DATRAW_TPL_LITERAL(C, "CARTESIAN"), grid_type::cartesian },
+        { DATRAW_TPL_LITERAL(C, "UNIFORM"), grid_type::cartesian },
+        { DATRAW_TPL_LITERAL(C, "RECTILINEAR"), grid_type::rectilinear },
+        { DATRAW_TPL_LITERAL(C, "TETRAHEDRA"), grid_type::tetrahedral }
+    };
+
     string_type content;
     datraw::info<C> retval;
 
@@ -36,6 +63,49 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
             auto value = info::skip_spaces(++colon, e);
 
             // TODO: process known content
+            /*
+             OBJECTFILENAME  - the name(s) of the raw-file(s)                     *
+ *                       For a single raw-file this is just the file name,  *
+ *                       for multiple raw-files, forming for example a      *
+ *                       time-series, a the numbering is controlled by a    *
+ *                       format string. More details below.                 *
+ *     FORMAT          - The format (or data type) of a single element.     *
+ *                       Currently supported are:                           *
+ *                        - CHAR (8bit signed int)                          *
+ *                        - UCHAR (8bit unsigned int)                       *
+ *                        - SHORT (16bit signed int)                        *
+ *                        - USHORT (16bit unsigned int)                     *
+ *                        - INT (32bit signed int)                          *
+ *                        - UINT (32bit unsigned int)                       *
+ *                        - LONG (64bit signed int)                         *
+ *                        - ULONG (64bit unsigned int)                      *
+ *                        - HALF (16bit float format)                       *
+ *                          (1 sign bit + 5bit exponent + 10b mantissa)     *
+ *                        - FLOAT (32bit IEEE single float format)          *
+ *                        - LONG (64bit IEEE double float format)           *
+ *     GRIDTYPE        - The type of grid the data is organized in.         *
+ *                       Currently only the UNIFORM type is supported.      *
+ *     COMPONENTS      - number N of components per tupel (int value)       *
+ *     DIMENSIONS      - dimensionality M of the grid (int value)           *
+ *     TIMESTEPS       - number of time steps/ number of raw files          *
+ *     BYTEORDER       - byte order of the raw-file is stored in; either    *
+ *                       LITTLE_ENDIAN (default) or BIG_ENDIAN              *
+ *     DATAOFFSET      - byte offset in the ra-file(s) where the actual     *
+ *                       data starts                                        *
+ *     RESOLUTION      - resolution of the grid, i.e. number of elements in *
+ *                       each dimension. (M int values, X Y Z ...)          *
+ *     SLICETHICKNESS  - size of the grid cells in each direction/dimension *
+ *                       (M float values, (dX dY dZ ...)         
+            */
+            /*
+            datRawGridTypes[] = {
+    {"EQUIDISTANT", DR_GRID_CARTESIAN},
+    {"CARTESIAN", DR_GRID_CARTESIAN},
+    {"UNIFORM", DR_GRID_CARTESIAN},
+    {"RECTILINEAR", DR_GRID_RECTILINEAR},
+    {"TETRAHEDRA", DR_GRID_TETRAHEDRAL}
+};
+            */
             retval.properties[key] = string_type(value, e);
         }
     }
