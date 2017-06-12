@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="datraw.h" />
     <ClInclude Include="datraw\endianness.h" />
+    <ClInclude Include="datraw\grid_type.h" />
     <ClInclude Include="datraw\info.h" />
     <ClInclude Include="datraw\literal.h" />
     <ClInclude Include="datraw\scalar_type.h" />

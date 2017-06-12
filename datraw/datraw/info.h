@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "datraw/grid_type.h"
 #include "datraw/types.h"
 #include "datraw/variant.h"
 
@@ -47,12 +48,18 @@ namespace datraw {
         /// Parses the given dat file.
         /// </summary>
         /// <param name="file"></param>
-        /// <returns></returns>
+        /// <returns>The parsed dat file.</returns>
         static info parse(const string_type& file);
 
         /// <summary>
         /// Skip all white space characters in the given range.
         /// </summary>
+        /// <tparam name="I">The type of character iterator.</tparam>
+        /// <param name="begin">The begin of the string.</param>
+        /// <param name="end">The end of the string.</param>
+        /// <returns>The first non-space character at or after
+        /// <paramref name="it" />, but before <paramref name="end" />.
+        /// </returns>
         template<class I> static I skip_spaces(I it, I end);
 
         /// <summmary>
@@ -85,8 +92,6 @@ namespace datraw {
         /// Initialises an empty instance.
         /// </summary>
         inline info(void) { }
-
-
 
     private:
 
