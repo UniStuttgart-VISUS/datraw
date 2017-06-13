@@ -43,9 +43,9 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
         { info::property_object_file_name, variant_type::reverse_traits<string_type>::type },
         { info::property_origin, datraw::variant_type::vec_uint32 },
         { info::property_resolution, datraw::variant_type::vec_uint32  },    // if (!(info->resolution = (int*)malloc(info->dimensions * sizeof(int)))) {
-        { info::property_slice_thickness, datraw::variant_type::vec_uint32  },
+        { info::property_slice_thickness, datraw::variant_type::vec_float32  },
         { info::property_tetrahedra, datraw::variant_type::uint64 },
-        { info::property_time_steps, datraw::variant_type::uint32 },
+        { info::property_time_steps, datraw::variant_type::uint64 },
         { info::property_vertices, datraw::variant_type::uint64 },
     };
 
@@ -123,6 +123,7 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
         } /* end if (colon != e) */
     }
 
+    retval.check();
     return retval;
 }
 
@@ -232,6 +233,155 @@ const typename datraw::info<C>::string_type datraw::info<C>::property_vertices(
 
 
 /*
+ * datraw::info<C>::check
+ */
+template<class C>
+void datraw::info<C>::check(void) {
+    /* Check fatal errors. */
+    if (!this->contains(info::property_object_file_name)
+            || this->object_file_name().empty()) {
+        std::stringstream msg;
+        msg << "The property \""
+            << info::narrow_string(info::property_object_file_name)
+            << "\" is mandatory and must be a non-empty string." << std::ends;
+        throw std::runtime_error(msg.str());
+    }
+
+    if (!this->contains(info::property_format)) {
+        std::stringstream msg;
+        msg << "The property \"" << info::narrow_string(info::property_format)
+            << "\" is mandatory." << std::ends;
+        throw std::runtime_error(msg.str());
+    }
+
+    /* Fix soft errors. */
+    if (!this->contains(info::property_components)) {
+        // If number of components is not given, assume scalars.
+        this->properties[info::property_components] = variant_type(
+            static_cast<decltype(this->components())>(1));
+    }
+
+    if (!this->contains(info::property_byte_order)) {
+        // If byte order is not given, assume Intel (little endian).
+        this->properties[info::property_byte_order] = variant_type(
+            datraw::endianness::little);
+    }
+
+    if (!this->contains(info::property_grid_type)) {
+        // If no grid is given, assume a Cartesian one.
+        this->properties[info::property_grid_type] = variant_type(
+            datraw::grid_type::cartesian);
+    }
+
+    if (!this->contains(info::property_time_steps)) {
+        // Assume a single time step.
+        this->properties[info::property_time_steps] = variant_type(
+            static_cast<decltype(this->time_steps())>(1));
+    }
+
+    if (!this->contains(info::property_dimensions)) {
+        // Assume 3D volumetric data.
+        this->properties[info::property_dimensions] = variant_type(
+            static_cast<decltype(this->dimensions())>(3));
+    }
+
+    if (!this->contains(info::property_data_offset)) {
+        // Assume that the raw file has no header.
+        this->properties[info::property_data_offset] = variant_type(
+            static_cast<decltype(this->data_offset())>(0));
+    }
+
+#if 0
+     case DR_GRID_RECTILINEAR:
+         if (strstr(inputLine, "SLICETHICKNESS")) {
+             if (sscanf(inputLine, "SLICETHICKNESS[%d]", &axis) != 1) {
+                 datRaw_logError("SLICKETHICKNESS must be subscripted with the axis in case of a RECTILINEAR grid!\n");
+                 return 0;
+             }
+
+             size = 0;
+             for (i = 0; i < axis; ++i) {
+                 size += info->resolution[i];
+             }
+
+             if (info->sliceDist[size] != -1.0f) {
+                 datRaw_logError("DatRaw Error: Multiple slice distance lines given\n");
+                 error = 1;
+             } else {
+                 i = 0;
+                 p = s1 = dupstr(sep + 1);
+                 if (!p) {
+                     datRaw_logError("DatRaw: Error parsing dat-file - Failed to allocate temp. storage!\n");
+                     return 0;
+                 }
+                 /*while ((s2 = strsep(&s1," \t\n"))) {*/ /* not ansi :-( */
+                 while ((s2 = strtok(s1, " ,\t\n"))) {
+                     if (*s2 == '\0') {
+                         continue;
+                     }
+                     if (i >= info->resolution[axis]) {
+                         error = 1;
+                         break;
+                     }
+                     if (sscanf(s2, "%f", &info->sliceDist[size + i]) != 1) {
+                         error = 1;
+                         break;
+                     }
+                     i++;
+                     s1 = NULL;
+                 }
+                 free(p);
+             }
+         }
+         break;
+
+#endif
+
+    /* Check/fix errors depending on the grid type. */
+    switch (this->grid_type()) {
+        case datraw::grid_type::cartesian:
+        case datraw::grid_type::rectilinear:
+            //if (this->)
+            /*
+              for (i = 0; i < info->dimensions; i++) {
+            if (info->sliceDist[i] <= 0.0) {
+                datRaw_logWarning("DatRaw Warning: %d. slice distance in %s invalid\n-> set to 1! \n", i, datfile);
+                info->sliceDist[i] = 1.f;
+            }
+            if (info->resolution[i] <= 0) {
+                datRaw_logError("DatRaw Error: resolution for %d. axes in %s invalid\n! \n", i, datfile);
+                return 0;
+            }
+        }
+        */
+            break;
+
+        case datraw::grid_type::tetrahedral:
+            if (!this->contains(info::property_vertices)) {
+                this->properties[info::property_vertices] = variant_type(
+                    static_cast<decltype(this->vertices())>(0));
+            }
+            if (!this->contains(info::property_tetrahedra)) {
+                this->properties[info::property_tetrahedra] = variant_type(
+                    static_cast<decltype(this->tetrahedra())>(0));
+            }
+            break;
+    }
+}
+
+
+/*
+ * datraw::info<C>::property_names
+ */
+template<class C>
+template<class I> void datraw::info<C>::property_names(I oit) const {
+    for (auto& it : this->properties) {
+        *oit++ = it.first;
+    }
+}
+
+
+/*
  * datraw::info<C>::operator []
  */
 template<class C>
@@ -239,9 +389,12 @@ typename datraw::info<C>::variant_type& datraw::info<C>::operator [](
         const string_type& prop) {
     auto it = this->properties.find(prop);
     if (it == this->properties.end()) {
-        throw std::out_of_range("Could not find property in datraw info.");
+        std::stringstream msg;
+        msg << "Could not find property \"" << info::narrow_string(prop)
+            << "\" in datraw::info." << std::ends;
+        throw std::out_of_range(msg.str());
     }
-    return *it;
+    return it->second;
 }
 
 
@@ -253,9 +406,12 @@ const typename datraw::info<C>::variant_type& datraw::info<C>::operator [](
         const string_type& prop) const {
     auto it = this->properties.find(prop);
     if (it == this->properties.end()) {
-        throw std::out_of_range("Could not find property in datraw info.");
+        std::stringstream msg;
+        msg << "Could not find property \"" << info::narrow_string(prop)
+            << "\" in datraw::info." << std::ends;
+        throw std::out_of_range(msg.str());
     }
-    return *it;
+    return it->second;
 }
 
 
@@ -395,7 +551,7 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse_grid_type(
         const string_type& str) {
     static const struct {
         string_type Tag;
-        grid_type Value;
+        datraw::grid_type Value;
     } GRID_TYPES[] = {
         { DATRAW_TPL_LITERAL(C, "EQUIDISTANT"), grid_type::cartesian },
         { DATRAW_TPL_LITERAL(C, "CARTESIAN"), grid_type::cartesian },
@@ -425,7 +581,7 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse_scalar_type(
         const string_type& str) {
     static const struct {
         string_type Tag;
-        scalar_type Value;
+        datraw::scalar_type Value;
     } SCALAR_TYPES[] = {
         { DATRAW_TPL_LITERAL(C, "CHAR"), scalar_type::int8 },
         { DATRAW_TPL_LITERAL(C, "UCHAR"), scalar_type::uint8 },
