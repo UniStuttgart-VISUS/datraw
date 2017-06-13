@@ -25,10 +25,4 @@ namespace datraw {
         big
     };
 
-
-    /// <summary>
-    /// Answer the endianness of the system we are running on.
-    /// </summary>
-    /// <returns>The endianness of the system.</returns>
-//    extern endianness DATRAW_API get_system_endianness(void);
 }
