@@ -17,5 +17,4 @@ namespace datraw {
         tetrahedral
     };
 
-
 }
