@@ -234,11 +234,208 @@ namespace datraw {
         inline info(void) { }
 
         /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_byte_order" />.
+        /// </summary>
+        /// <returns>The byte order of the data.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline datraw::endianness byte_order(void) const {
+            auto v = (*this)[info::property_byte_order];
+            return v.get<datraw::endianness>();
+        }
+
+        /// <summary>
         /// Performs a sanity check of the objects content.
         /// </summary>
+        /// <remarks>
+        /// This method will also fill in defaults as possible.
+        /// </remarks>
         /// <exception cref="std::runtime_error">In case something is wrong with
         /// the content of the object.</exception>
-        //void check(void) const;
+        void check(void);
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_components" />.
+        /// </summary>
+        /// <returns>The number of components per voxel.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline std::uint32_t components(void) const {
+            auto v = (*this)[info::property_components];
+            return v.get<std::uint32_t>();
+        }
+
+        /// <summary>
+        /// Answer whether the object holds a property with the given name.
+        /// </summary>
+        /// <param name="prop">The name of the propery to search.</param>
+        /// <returns><c>true</c> in case the property exists, <c>false</c>
+        /// otherwise.</returns>
+        inline bool contains(const string_type& prop) const {
+            return (this->properties.find(prop) != this->properties.end());
+        }
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_data_offset" />.
+        /// </summary>
+        /// <returns>The offset in bytes into the raw file where the actual
+        /// data starts.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline std::uint64_t data_offset(void) const {
+            auto v = (*this)[info::property_data_offset];
+            return v.get<std::uint64_t>();
+        }
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_dimensions" />.
+        /// </summary>
+        /// <returns>The dimensions of the data, usually 3.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline std::uint32_t dimensions(void) const {
+            auto v = (*this)[info::property_dimensions];
+            return v.get<std::uint32_t>();
+        }
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_format" />.
+        /// </summary>
+        /// <returns>The format of a scalar.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline datraw::scalar_type format(void) const {
+            auto v = (*this)[info::property_format];
+            return v.get<datraw::scalar_type>();
+        }
+
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_grid_type" />.
+        /// </summary>
+        /// <returns>The type of grid used for the data.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline datraw::grid_type grid_type(void) const {
+            auto v = (*this)[info::property_grid_type];
+            return v.get<datraw::grid_type>();
+        }
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_object_file_name" />.
+        /// </summary>
+        /// <returns>The path to the raw file.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline string_type object_file_name(void) const {
+            auto v = (*this)[info::property_object_file_name];
+            return v.get<string_type>();
+        }
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_origin" />.
+        /// </summary>
+        /// <returns>TODO.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline const std::vector<std::uint32_t>& origin(void) const {
+            auto& v = (*this)[info::property_origin];
+            return v.get<std::vector<std::uint32_t>>();
+        }
+
+        /// <summary>
+        /// Answer the names of all properties stored in the object.
+        /// </summary>
+        /// <remarks>
+        /// An exemplary use of this method would be:
+        /// <code>
+        /// std::vector<std::string> props;
+        /// props.reserve(info.size());
+        /// info.property_names(std::back_inserter(props));
+        /// </code>
+        /// </remarks>
+        /// <tparam name="I">An output iterator type for
+        /// <see cref="string_type" />.</tparam>
+        /// <param name="oit">An output iterator, which is an inserter or can at
+        /// least be incremented <see cref="size" /> times.</param>
+        template<class I> void property_names(I oit) const;
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_resolution" />.
+        /// </summary>
+        /// <returns>The number of voxels on each axis.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline std::vector<std::uint32_t> resolution(void) const {
+            auto v = (*this)[info::property_resolution];
+            return v.get<std::vector<std::uint32_t>>();
+        }
+
+        /// <summary>
+        /// Answer the number of properties stored in the object.
+        /// </summary>
+        /// <returns>The number of properties.</returns>
+        inline size_t size(void) const {
+            return this->properties.size();
+        }
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_slice_thickness" />.
+        /// </summary>
+        /// <returns>The distance between the voxels in each axis.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline std::vector<float> slice_thickness(void) const {
+            auto v = (*this)[info::property_slice_thickness];
+            return v.get<std::vector<float>>();
+        }
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_tetrahedra" />.
+        /// </summary>
+        /// <returns>TODO.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline std::uint64_t tetrahedra(void) const {
+            auto v = (*this)[info::property_tetrahedra];
+            return v.get<std::uint64_t>();
+        }
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_time_steps" />.
+        /// </summary>
+        /// <returns>The number of time steps (individual raw files) the data
+        /// set comprises.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline std::uint64_t time_steps(void) const {
+            auto v = (*this)[info::property_time_steps];
+            return v.get<std::uint64_t>();
+        }
+
+        /// <summary>
+        /// Gets the value of the well-known property named
+        /// <see cref="property_vertices" />.
+        /// </summary>
+        /// <returns>TODO.</returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline std::uint64_t vertices(void) const {
+            auto v = (*this)[info::property_vertices];
+            return v.get<std::uint64_t>();
+        }
 
         /// <summary>
         /// Retrieves, if available, the property with the given name.

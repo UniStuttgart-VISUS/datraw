@@ -7,3 +7,6 @@
 *.db
 *.opendb
 /.vs/datraw/v14
+/t/Debug
+/test/Win32/Debug
+/Win32/Debug
