@@ -165,11 +165,6 @@
     </ClCompile>
     <ClCompile Include="t.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\datraw\datraw.vcxproj">
-      <Project>{1cfecf35-417d-491e-b457-c051c8fec327}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
