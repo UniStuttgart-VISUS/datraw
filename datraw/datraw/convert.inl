@@ -5,9 +5,20 @@
 
 
 /*
+ * datraw::convert
+ */
+template<class T, class I, class O>
+void datraw::convert(I begin, I end , O dst) {
+    while (begin != end) {
+        *dst++ = static_cast<T>(*begin++);
+    }
+}
+
+
+/*
  * datraw::swap_byte_order
  */
-template<> void datraw::swap_byte_order<64>(void *data, const size_t cnt) {
+template<> void datraw::swap_byte_order<8>(void *data, const size_t cnt) {
     auto idata = static_cast<std::uint64_t *>(data);
     for (size_t i = 0; i < cnt; i++) {
         auto v = idata[i];
@@ -27,7 +38,7 @@ template<> void datraw::swap_byte_order<64>(void *data, const size_t cnt) {
 /*
  * datraw::swap_byte_order
  */
-template<> void datraw::swap_byte_order<32>(void *data, const size_t cnt) {
+template<> void datraw::swap_byte_order<4>(void *data, const size_t cnt) {
     auto idata = static_cast<std::uint32_t *>(data);
     for (size_t i = 0; i < cnt; i++) {
         auto v = idata[i];
@@ -44,7 +55,7 @@ template<> void datraw::swap_byte_order<32>(void *data, const size_t cnt) {
 /*
  * datraw::swap_byte_order
  */
-template<> void datraw::swap_byte_order<16>(void *data, const size_t cnt) {
+template<> void datraw::swap_byte_order<2>(void *data, const size_t cnt) {
     auto idata = static_cast<std::uint16_t *>(data);
     for (size_t i = 0; i < cnt; i++) {
         auto v = idata[i];
