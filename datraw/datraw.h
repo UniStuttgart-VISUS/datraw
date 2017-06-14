@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "datraw/convert.h"
 #include "datraw/endianness.h"
 #include "datraw/info.h"
 #include "datraw/literal.h"
