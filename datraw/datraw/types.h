@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <array>
 #include <cinttypes>
 
 
@@ -20,7 +21,7 @@ namespace datraw {
     typedef std::uint32_t uint32;
     typedef std::uint64_t uint64;
 
-    typedef std::uint16_t float16;
+    typedef std::array<std::int8_t, 2> float16; // TODO: refactor to use bit field
     typedef float float32;
     typedef double float64;
 

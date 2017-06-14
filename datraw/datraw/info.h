@@ -184,6 +184,22 @@ namespace datraw {
         /// For a single raw-file this is just the file name, for multiple
         /// raw-files, forming for example a time-series, a the numbering
         /// is controlled by a format string.</para>
+        /// <para>The raw data for a data set consisting of multiple timesteps
+        /// can be either stored consecutively in a single file or in a separate
+        /// file per time step. In the second case, the ObjectFilename must
+        /// contain a conversion specification similar to the printf format
+        /// string. It starts with the '%' character followed by an optional
+        /// padding flag, field width, skip, and stride modifier and has to end
+        /// with the conversion specifier 'd'. The padding flags('0', '-', ' ')
+        /// and the minimum field width have the same meaning as in the *printf
+        /// specification. The skip flag (a '+' followed by a positive decimal
+        /// value) gives the enumeration of the first data file. The default
+        /// skip offset is 0, thus the first time step is assumed to be stored
+        /// in the file enumerated with 0. The stride (a '*' followed by a 
+        /// positive decimal value) specifies the offset between two consecutive
+        /// file enumerations. Example: data%03+1*2d.raw specifies the data
+        /// files data001.raw, data003.raw, data005.raw, data007.raw, ...
+        /// </para>
         /// </remarks>
         static const string_type property_object_file_name;
 
@@ -303,6 +319,15 @@ namespace datraw {
         }
 
         /// <summary>
+        /// Answer the size of a single element of the scalar or vector field.
+        /// </summary>
+        /// <remarks>
+        /// This is equivalent to <see cref="record_size" />.
+        /// </remarks>
+        /// <returns>The size of an element or 0 in case of an error.</returns>
+        size_t element_size(void) const;
+
+        /// <summary>
         /// Gets the value of the well-known property named
         /// <see cref="property_format" />.
         /// </summary>
@@ -369,6 +394,18 @@ namespace datraw {
         template<class I> void property_names(I oit) const;
 
         /// <summary>
+        /// Answer the size (in byte) of one data record of the data described
+        /// in this object.
+        /// </summary>
+        /// <remarks>
+        /// This is the legacy-named version of <see cref="element_size" />.
+        /// </remarks>
+        /// <returns>The size of an element or 0 in case of an error.</returns>
+        inline size_t record_size(void) const {
+            return this->element_size();
+        }
+
+        /// <summary>
         /// Gets the value of the well-known property named
         /// <see cref="property_resolution" />.
         /// </summary>
@@ -379,6 +416,13 @@ namespace datraw {
             auto v = (*this)[info::property_resolution];
             return v.get<std::vector<std::uint32_t>>();
         }
+
+        /// <summary>
+        /// Answer the size of a single scalar in bytes.
+        /// </summary>
+        /// <returns>The size of a single scalar or 0 in case of an error.
+        /// </returns>
+        size_t scalar_size(void) const;
 
         /// <summary>
         /// Answer the number of properties stored in the object.

@@ -371,12 +371,38 @@ void datraw::info<C>::check(void) {
 
 
 /*
+ * datraw::info<C>::element_size
+ */
+template<class C>
+size_t datraw::info<C>::element_size(void) const {
+    try {
+        return this->scalar_size() * this->dimensions();
+    } catch (...) {
+        return 0;
+    }
+}
+
+
+/*
  * datraw::info<C>::property_names
  */
 template<class C>
 template<class I> void datraw::info<C>::property_names(I oit) const {
     for (auto& it : this->properties) {
         *oit++ = it.first;
+    }
+}
+
+
+/*
+ * datraw::info<C>::scalar_size
+ */
+template<class C>
+size_t datraw::info<C>::scalar_size(void) const {
+    try {
+        return datraw::get_scalar_size(this->format());
+    } catch (...) {
+        return 0;
     }
 }
 
