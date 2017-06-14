@@ -4,6 +4,25 @@
 /// <author>Christoph Müller</author>
 
 
+/*
+ * datraw::info<C>::is_multi_file_description
+ */
+template<class C>
+bool datraw::info<C>::is_multi_file_description(const string_type& str) {
+    // Direct adaption of Thomas Klein's code.
+    static const auto MARKER = DATRAW_TPL_LITERAL(C, '%');
+
+    const char_type *s = str.data();
+    while (*s) {
+        if ((s[0] == MARKER) && (s[1] != MARKER)) {
+            return true;
+        }
+        ++s;
+    }
+
+    return false;
+}
+
 
 /*
  * datraw::info<C>::narrow_string
@@ -644,6 +663,110 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse_grid_type(
             "type." << std::ends;
         throw std::invalid_argument(msg.str());
     }
+}
+
+
+/*
+ * datraw::info<C>::parse_multi_file_description
+ */
+template<class C>
+typename datraw::info<C>::string_type
+datraw::info<C>::parse_multi_file_description(const string_type& str,
+        int& width, int& skip, int& stride) {
+    // TODO: replace with regex
+    // Direct adaption of Thomas Klein's code.
+    static const auto ASTERISK = DATRAW_TPL_LITERAL(C, '*');
+    static const auto D = DATRAW_TPL_LITERAL(C, 'd');
+    static const auto MARKER = DATRAW_TPL_LITERAL(C, '%');
+    static const auto MINUS = DATRAW_TPL_LITERAL(C, '-');
+    static const auto PLUS = DATRAW_TPL_LITERAL(C, '+');
+    static const auto SPACE = DATRAW_TPL_LITERAL(C, ' ');
+    static const auto ZERO = DATRAW_TPL_LITERAL(C, '0');
+
+    std::vector<char_type> retval(str.begin(), str.end());
+    char_type *s = nullptr;
+    auto p = retval.data();
+    auto q = str.data();
+
+    while (*q) {
+        if ((q[0] == MARKER) && (q[1] != MARKER)) {
+            if (s) {
+                std::stringstream msg;
+                msg << "The multi-file description \""
+                    << info::narrow_string(str) << "\" contains more than one "
+                    "varying part." << std::ends;
+                throw std::invalid_argument(msg.str());
+            } else {
+                s = q;
+            }
+        }
+        ++q;
+    }
+    ++s;
+
+    if (!s || (*s == 0)) {
+        std::stringstream msg;
+        msg << "The multi-file description \"" << info::narrow_string(str)
+            << "\" is invalid." << std::ends;
+        throw std::invalid_argument(msg.str());
+    }
+
+    if ((*s == ZERO) || (*s == MINUS) || (*s == SPACE)) {
+        ++s;
+    }
+
+    width = 0;
+    while (isdigit(*s)) {
+        width = width * 10 + (*s - ZERO);
+        s++;
+    }
+
+    skip = 0;
+    if (*s == PLUS) {
+        q = s;
+        s++;
+        if (!isdigit(*s)) {
+            std::stringstream msg;
+            msg << "The multi-file description \"" << info::narrow_string(str)
+                << "\" contains an invalid skip specification." << std::ends;
+            throw std::invalid_argument(msg.str());
+        }
+        while (isdigit(*s)) {
+            skip = skip * 10 + (*s - ZERO);
+            s++;
+        }
+        memmove(q, s, strlen(s) + 1);
+        s = q;
+    }
+
+    stride = 0;
+    if (*s == ASTERISK) {
+        q = s;
+        s++;
+        if (!isdigit(*s)) {
+            std::stringstream msg;
+            msg << "The multi-file description \"" << info::narrow_string(str)
+                << "\" contains an invalid stride specification." << std::ends;
+            throw std::invalid_argument(msg.str());
+        }
+        while (isdigit(*s)) {
+            stride = stride * 10 + (*s - ZERO);
+            s++;
+        }
+        memmove(q, s, strlen(s) + 1);
+        s = q;
+    } else {
+        stride = 1;
+    }
+
+    if (*s != D) {
+        std::stringstream msg;
+        msg << "The multi-file description \"" << info::narrow_string(str)
+            << "\" is invalid." << std::ends;
+        throw std::invalid_argument(msg.str());
+    }
+
+    return p;
 }
 
 
