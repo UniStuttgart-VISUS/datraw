@@ -238,57 +238,77 @@ const typename datraw::info<C>::string_type datraw::info<C>::property_vertices(
 template<class C>
 void datraw::info<C>::check(void) {
     /* Check fatal errors. */
-    if (!this->contains(info::property_object_file_name)
-            || this->object_file_name().empty()) {
-        std::stringstream msg;
-        msg << "The property \""
-            << info::narrow_string(info::property_object_file_name)
-            << "\" is mandatory and must be a non-empty string." << std::ends;
-        throw std::runtime_error(msg.str());
+    {
+        auto& pn = info::property_object_file_name;
+        if (!this->contains(pn) || this->object_file_name().empty()) {
+            std::stringstream msg;
+            msg << "The property \"" << info::narrow_string(pn) << "\" is "
+                "mandatory and must be a non-empty string." << std::ends;
+            throw std::runtime_error(msg.str());
+        }
     }
 
-    if (!this->contains(info::property_format)) {
-        std::stringstream msg;
-        msg << "The property \"" << info::narrow_string(info::property_format)
-            << "\" is mandatory." << std::ends;
-        throw std::runtime_error(msg.str());
+    {
+        auto& pn = info::property_format;
+        if (!this->contains(pn)) {
+            std::stringstream msg;
+            msg << "The property \"" << info::narrow_string(pn) << "\" is "
+                "mandatory." << std::ends;
+            throw std::runtime_error(msg.str());
+        }
     }
 
     /* Fix soft errors. */
-    if (!this->contains(info::property_components)) {
-        // If number of components is not given, assume scalars.
-        this->properties[info::property_components] = variant_type(
-            static_cast<decltype(this->components())>(1));
+    {
+        typedef typename std::decay<decltype(this->components())>::type v_t;
+        auto& pn = info::property_components;
+        if (!this->contains(pn)) {
+            // If number of components is not given, assume scalars.
+            this->properties[pn] = static_cast<v_t>(1);
+        }
     }
 
-    if (!this->contains(info::property_byte_order)) {
-        // If byte order is not given, assume Intel (little endian).
-        this->properties[info::property_byte_order] = variant_type(
-            datraw::endianness::little);
+    {
+        auto& pn = info::property_byte_order;
+        if (!this->contains(pn)) {
+            // If byte order is not given, assume Intel (little endian).
+            this->properties[pn] = datraw::endianness::little;
+        }
     }
 
-    if (!this->contains(info::property_grid_type)) {
-        // If no grid is given, assume a Cartesian one.
-        this->properties[info::property_grid_type] = variant_type(
-            datraw::grid_type::cartesian);
+    {
+        auto& pn = info::property_grid_type;
+        if (!this->contains(pn)) {
+            // If no grid is given, assume a Cartesian one.
+            this->properties[pn] = datraw::grid_type::cartesian;
+        }
     }
 
-    if (!this->contains(info::property_time_steps)) {
-        // Assume a single time step.
-        this->properties[info::property_time_steps] = variant_type(
-            static_cast<decltype(this->time_steps())>(1));
+    {
+        typedef typename std::decay<decltype(this->time_steps())>::type v_t;
+        auto& pn = info::property_time_steps;
+        if (!this->contains(pn)) {
+            // Assume a single time step.
+            this->properties[pn] = static_cast<v_t>(1);
+        }
     }
 
-    if (!this->contains(info::property_dimensions)) {
-        // Assume 3D volumetric data.
-        this->properties[info::property_dimensions] = variant_type(
-            static_cast<decltype(this->dimensions())>(3));
+    {
+        typedef typename std::decay<decltype(this->dimensions())>::type v_t;
+        auto& pn = info::property_dimensions;
+        if (!this->contains(pn)) {
+            // Assume 3D volumetric data.
+            this->properties[pn] = static_cast<v_t>(3);
+        }
     }
 
-    if (!this->contains(info::property_data_offset)) {
-        // Assume that the raw file has no header.
-        this->properties[info::property_data_offset] = variant_type(
-            static_cast<decltype(this->data_offset())>(0));
+    {
+        typedef typename std::decay<decltype(this->data_offset())>::type v_t;
+        auto& pn = info::property_data_offset;
+        if (!this->contains(pn)) {
+            // Assume that the raw file has no header.
+            this->properties[pn] = static_cast<v_t>(0);
+        }
     }
 
 #if 0
@@ -338,32 +358,62 @@ void datraw::info<C>::check(void) {
 #endif
 
     /* Check/fix errors depending on the grid type. */
+    if (this->grid_type() == datraw::grid_type::cartesian) {
+        auto& pn = info::property_slice_thickness;
+        if (!this->contains(pn)) {
+            typename std::decay<decltype(this->slice_thickness())>::type v;
+            v.resize(this->dimensions());
+            std::fill(v.begin(), v.end(), 1);
+            this->properties[pn] = v;
+        }
+
+        if (this->slice_thickness().size() != this->dimensions()) {
+            std::stringstream msg;
+            msg << "The property \"" << info::narrow_string(pn) << "\" "
+                "must specify the slice thickness for all of the "
+                << this->dimensions() << " dimensions." << std::ends;
+            throw std::runtime_error(msg.str());
+        }
+    }
+
     switch (this->grid_type()) {
         case datraw::grid_type::cartesian:
         case datraw::grid_type::rectilinear:
-            //if (this->)
-            /*
-              for (i = 0; i < info->dimensions; i++) {
-            if (info->sliceDist[i] <= 0.0) {
-                datRaw_logWarning("DatRaw Warning: %d. slice distance in %s invalid\n-> set to 1! \n", i, datfile);
-                info->sliceDist[i] = 1.f;
+            /* Resolution is mandatory and must be set for each dimesnion. */
+            {
+                auto& pn = info::property_resolution;
+                if (!this->contains(pn)) {
+                    std::stringstream msg;
+                    msg << "The property \"" << info::narrow_string(pn) << "\" "
+                        "is mandatory for cartesian and rectilinear grids."
+                        << std::ends;
+                    throw std::runtime_error(msg.str());
+                }
+
+                if (this->resolution().size() != this->dimensions()) {
+                    std::stringstream msg;
+                    msg << "The property \"" << info::narrow_string(pn) << "\" "
+                        "must specify the resolution for all of the "
+                        << this->dimensions() << " dimensions." << std::ends;
+                    throw std::runtime_error(msg.str());
+                }
             }
-            if (info->resolution[i] <= 0) {
-                datRaw_logError("DatRaw Error: resolution for %d. axes in %s invalid\n! \n", i, datfile);
-                return 0;
-            }
-        }
-        */
             break;
 
         case datraw::grid_type::tetrahedral:
-            if (!this->contains(info::property_vertices)) {
-                this->properties[info::property_vertices] = variant_type(
-                    static_cast<decltype(this->vertices())>(0));
+            {
+            typedef typename std::decay<decltype(this->vertices())>::type v_t;
+                auto& pn = info::property_vertices;
+                if (!this->contains(pn)) {
+                    this->properties[pn] = static_cast<v_t>(0);
+                }
             }
-            if (!this->contains(info::property_tetrahedra)) {
-                this->properties[info::property_tetrahedra] = variant_type(
-                    static_cast<decltype(this->tetrahedra())>(0));
+            {
+                typedef typename std::decay<decltype(this->tetrahedra())>::type v_t;
+                auto& pn = info::property_tetrahedra;
+                if (!this->contains(pn)) {
+                    this->properties[pn] = static_cast<v_t>(0);
+                }
             }
             break;
     }
@@ -465,8 +515,6 @@ template<datraw::variant_type T, datraw::variant_type... Ts>
 typename datraw::info<C>::variant_type datraw::info<C>::parse(
         detail::variant_type_list_t<T, Ts...>, const string_type& str,
         const datraw::variant_type type) {
-    typedef typename variant_type::forward_traits<T>::value_type value_type;
-
     switch (type) {
         case datraw::variant_type::string:
         case datraw::variant_type::wstring:
