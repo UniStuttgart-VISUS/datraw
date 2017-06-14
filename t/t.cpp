@@ -61,7 +61,11 @@ int main() {
         //}
 
         std::vector<int> x = { 23, 23, 23,434, 1234 };
-        datraw::swap_byte_order<32>(x.data(), x.size());
+        datraw::swap_byte_order<sizeof(int)>(x.data(), x.size());
+        std::vector<__int64> y;
+        datraw::convert<__int64>(x.begin(), x.end(), std::back_inserter(y));
+        datraw::convert(x.begin(), x.end(), y.begin());
+        datraw::swap_byte_order<sizeof(__int64)>(y.data(), y.size());
 
         auto winfo = datraw::info<wchar_t>::parse(L"S:\\Daten\\Volumen\\tuebingen\\foot.dat");
     } catch (std::exception& ex) {
