@@ -60,6 +60,9 @@ int main() {
         //    auto x = info.vertices();
         //}
 
+        std::vector<int> x = { 23, 23, 23,434, 1234 };
+        datraw::swap_byte_order<32>(x.data(), x.size());
+
         auto winfo = datraw::info<wchar_t>::parse(L"S:\\Daten\\Volumen\\tuebingen\\foot.dat");
     } catch (std::exception& ex) {
         std::cerr << ex.what() << std::endl;
