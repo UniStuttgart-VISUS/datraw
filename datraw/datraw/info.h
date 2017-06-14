@@ -362,6 +362,8 @@ namespace datraw {
             return v.get<datraw::grid_type>();
         }
 
+        string_type multi_file_name(const std::uint64_t timeStep);
+
         /// <summary>
         /// Gets the value of the well-known property named
         /// <see cref="property_object_file_name" />.

@@ -453,6 +453,31 @@ size_t datraw::info<C>::element_size(void) const {
 
 
 /*
+ * datraw::info<C>::multi_file_name
+ */
+template<class C>
+typename datraw::info<C>::string_type datraw::info<C>::multi_file_name(
+        const std::uint64_t timeStep) {
+    // Adapted directly from Thomas Klein's code.
+    int minWidth, offset, stride;
+    auto tpl = info::parse_multi_file_description(this->object_file_name(),
+        minWidth, offset, stride);
+    if (tpl.empty()) {
+        return tpl;
+    }
+
+    std::vector<char_type> retval;
+    retval.resize(tpl.length()
+        + (std::max)(static_cast<int>(log10(this->time_steps())), minWidth)
+        + 2);
+
+    ::sprintf(retval.data(), tpl.c_str(), offset + stride * timeStep);
+
+    return retval.data();
+}
+
+
+/*
  * datraw::info<C>::property_names
  */
 template<class C>
