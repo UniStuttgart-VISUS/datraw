@@ -12,6 +12,7 @@
 #include <codecvt>
 #endif /* (!defined(__GNUC__) || (__GNUC__ >= 5)) */
 #include <fstream>
+#include <regex>
 #include <stdexcept>
 #include <streambuf>
 #include <sstream>
@@ -50,6 +51,15 @@ namespace datraw {
         typedef basic_variant<char_type> variant_type;
 
         /// <summary>
+        /// Determines whether the given string is a multi-file description for
+        /// a time series.
+        /// </summary>
+        /// <param name="str">The string to be tested.</param>
+        /// <returns><c>true</c> if the string is a multi-file description,
+        /// <c>false</c> otherwise.</returns>
+        static bool is_multi_file_description(const string_type& str);
+
+        /// <summary>
         /// Ensure a narrow string.
         /// </summary>
         inline static const std::string& narrow_string(
@@ -63,9 +73,9 @@ namespace datraw {
         static std::string narrow_string(const std::wstring& str);
 
         /// <summary>
-        /// Parses the given dat file.
+        /// Parses the given dat file and checks its content.
         /// </summary>
-        /// <param name="file"></param>
+        /// <param name="file">Path to the dat file.</param>
         /// <returns>The parsed dat file.</returns>
         static info parse(const string_type& file);
 
@@ -565,6 +575,14 @@ namespace datraw {
         /// Parses <see cref="grid_type" /> from <paramref name="str" />.
         /// </summary>
         static variant_type parse_grid_type(const string_type& str);
+
+        /// <summary>
+        /// Parses the given multi-file description, returns a template for the
+        /// actual file names and writes the parameters to the given
+        /// out-parameters.
+        /// </summary>
+        static string_type parse_multi_file_description(const string_type& str,
+            int& width, int& skip, int& stride);
 
         /// <summary>
         /// Parses <see cref="scalar_type" /> from <paramref name="str" />.
