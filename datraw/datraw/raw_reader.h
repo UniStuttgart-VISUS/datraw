@@ -130,6 +130,11 @@ namespace datraw {
         /// <paramref name="dst" /> provided the buffer size
         /// (<paramref name="cntDst" />) is large enough.
         /// </summary>
+        /// <remarks>
+        /// <para>The method will swap the byte order as necessary, ie it is
+        /// guaranteed that the data returned match the byte order of the
+        /// system.</para>
+        /// </remarks>
         /// <param name="dst">Pointer to <paramref name="cntDst" /> bytes of
         /// memory where the raw data can be stored. Nothing will be written if
         /// this is <c>nullptr</c>.</param>
@@ -149,6 +154,11 @@ namespace datraw {
         /// Read the content of the current time step and store it in a new
         /// <see cref="std::vector" />.
         /// </summary>
+        /// <remarks>
+        /// <para>The method will swap the byte order as necessary, ie it is
+        /// guaranteed that the data returned match the byte order of the
+        /// system.</para>
+        /// </remarks>
         /// <returns>The content of the current time step.</returns>
         /// <exception cref="std::range_error">If the time series has been
         /// completely read, ie the current time step is invalid.</exception>
@@ -166,6 +176,11 @@ namespace datraw {
         /// Advance to the next time step and store the raw file in a new
         /// <see cref="std::vector" />.
         /// </summary>
+        /// <remarks>
+        /// <para>The method will swap the byte order as necessary, ie it is
+        /// guaranteed that the data returned match the byte order of the
+        /// system.</para>
+        /// </remarks>
         /// <returns>The content of the current time step or an empty array
         /// if the new time step is invalid.</returns>
         /// <exception cref="std::invalid_argument">If the path of the current
