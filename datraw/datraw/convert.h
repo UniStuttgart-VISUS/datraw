@@ -70,7 +70,7 @@ namespace datraw {
     /// <param name="data">A pointer to the data to be converted.</param>
     /// <param name="cnt">The number of numbers designated by
     /// <paramref name="data" />.</param>
-    template<> void swap_byte_order<8>(void *data, const size_t cnt);
+    template<> inline void swap_byte_order<8>(void *data, const size_t cnt);
 
     /// <summary>
     /// Convert the byte order of <paramref name="cnt" /> numbers with a width
@@ -79,7 +79,7 @@ namespace datraw {
     /// <param name="data">A pointer to the data to be converted.</param>
     /// <param name="cnt">The number of numbers designated by
     /// <paramref name="data" />.</param>
-    template<> void swap_byte_order<4>(void *data, const size_t cnt);
+    template<> inline void swap_byte_order<4>(void *data, const size_t cnt);
 
     /// <summary>
     /// Convert the byte order of <paramref name="cnt" /> numbers with a width
@@ -88,7 +88,19 @@ namespace datraw {
     /// <param name="data">A pointer to the data to be converted.</param>
     /// <param name="cnt">The number of numbers designated by
     /// <paramref name="data" />.</param>
-    template<> void swap_byte_order<2>(void *data, const size_t cnt);
+    template<> inline void swap_byte_order<2>(void *data, const size_t cnt);
+
+    /// <summary>
+    /// Convert the byte order of <paramref name="cnt" /> numbers with a
+    /// <paramref name="width" /> bytes each.
+    /// </summary>
+    /// <param name="width">The width of a number in bytes, which must be
+    /// 2, 4 or 8 in order for the implementation to do anything.</param>
+    /// <param name="data">A pointer to the data to be converted.</param>
+    /// <param name="cnt">The number of numbers designated by
+    /// <paramref name="data" />.</param>
+    inline void swap_byte_order(const size_t width, void *data,
+        const size_t cnt);
 
 
 } /* end namespace datraw */

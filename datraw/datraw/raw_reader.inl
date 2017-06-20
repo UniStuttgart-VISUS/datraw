@@ -32,8 +32,36 @@ typename datraw::raw_reader<C>::size_type datraw::raw_reader<C>::read_current(
     if ((dst != nullptr) && (cntDst >= retval)) {
         stream.seekg(0, ifstream_type::beg);
         stream.read(static_cast<char *>(dst), cntDst);
+
+        if (this->datInfo.requires_byte_swap()) {
+            auto ss = this->datInfo.scalar_size();
+            if ((retval % ss) != 0) {
+                std::stringstream msg;
+                msg << "The raw file \"" << info_type::narrow_string(path)
+                    << "\" contains " << retval << " bytes, which is not "
+                    << "divisible by the size of a scalar (" << ss << ")."
+                    << std::ends;
+                throw std::invalid_argument(msg.str());
+            }
+
+            datraw::swap_byte_order(ss, dst, retval / ss);
+        }
     }
 
     stream.close();
     return retval;
+}
+
+
+/*
+ * datraw::raw_reader<C>::read_next
+ */
+template<class C>
+std::vector<datraw::uint8> datraw::raw_reader<C>::read_next(void) const {
+    static const std::vector<datraw::uint8> EMPTY;
+    if (this->move_next()) {
+        return this->read_current();
+    } else {
+        return EMPTY;
+    }
 }

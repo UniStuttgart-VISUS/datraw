@@ -69,7 +69,7 @@ int main() {
 
         {
             datraw::raw_reader<char> r(info);
-            auto x = r.read_current(nullptr, 0);
+            auto x = r.read_current();
             auto y = x;
         }
 

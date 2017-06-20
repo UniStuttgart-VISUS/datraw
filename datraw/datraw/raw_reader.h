@@ -66,7 +66,7 @@ namespace datraw {
         static inline raw_reader open(const string_type& datPath) {
             raw_reader retval;
             retval.datInfo = info_type::parse(datPath);
-            return std::move(retval);
+            return retval;
         }
 
         /// <summary>
@@ -79,14 +79,14 @@ namespace datraw {
         /// </summary>
         /// <param name="info">The content of a dat file.</param>
         inline raw_reader(const info_type& info)
-            : datInfo(info), curTimeStep(0) { }
+            : curTimeStep(0), datInfo(info){ }
 
         /// <summary>
         /// Initialises a new instance for the given dat file content.
         /// </summary>
         /// <param name="info">The content of a dat file.</param>
         inline raw_reader(info_type&& info)
-            : datInfo(std::move(info)), curTimeStep(0) { }
+            : curTimeStep(0), datInfo(std::move(info)) { }
 
         /// <summary>
         /// Answer the content of the dat file.
@@ -94,6 +94,35 @@ namespace datraw {
         /// <returns>The content of the dat file.</returns>
         inline const info_type& info(void) const {
             return this->datInfo;
+        }
+
+        /// <summary>
+        /// Answer the current time step.
+        /// </summary>
+        /// <returns>The current time step.</returns>
+        inline time_step_type current(void) const {
+            return this->curTimeStep;
+        }
+
+        /// <summary>
+        /// Answer whether, according to the <see cref="info" />, there is
+        /// another time step with another raw file exists.
+        /// </summary>
+        /// <returns><c>true</c> if the last time step has not yet been reached,
+        /// <c>false</c> otherwise.</returns>
+        inline bool has_next(void) const {
+            return (this->curTimeStep + 1 < this->datInfo.time_steps());
+        }
+
+        /// <summary>
+        /// Move to the next time step and anwer whether this is valid according
+        /// to the <see cref="info" />.
+        /// </summary>
+        /// <returns><c>true</c> if the new time step is valid, <c>false</c>
+        /// otherwise.</returns>
+        inline bool move_next(void) {
+            ++this->curTimeStep;
+            return static_cast<bool>(*this);
         }
 
         /// <summary>
@@ -117,10 +146,48 @@ namespace datraw {
         size_type read_current(void *dst, const size_type cntDst) const;
 
         /// <summary>
+        /// Read the content of the current time step and store it in a new
+        /// <see cref="std::vector" />.
+        /// </summary>
+        /// <returns>The content of the current time step.</returns>
+        /// <exception cref="std::range_error">If the time series has been
+        /// completely read, ie the current time step is invalid.</exception>
+        /// <exception cref="std::invalid_argument">If the path of the current
+        /// time step was invalid, ie the raw file could not be opened.
+        /// </exception>
+        inline std::vector<datraw::uint8> read_current(void) const {
+            std::vector<datraw::uint8> retval;
+            retval.resize(this->read_current(nullptr, 0));
+            this->read_current(retval.data(), retval.size());
+            return retval;
+        }
+
+        /// <summary>
+        /// Advance to the next time step and store the raw file in a new
+        /// <see cref="std::vector" />.
+        /// </summary>
+        /// <returns>The content of the current time step or an empty array
+        /// if the new time step is invalid.</returns>
+        /// <exception cref="std::invalid_argument">If the path of the current
+        /// time step was invalid, ie the raw file could not be opened.
+        /// </exception>
+        std::vector<datraw::uint8> read_next(void) const;
+
+        /// <summary>
         /// Resets the current time step to the begin of the sequence.
         /// </summary>
         inline void reset(void) {
             this->curTimeStep = 0;
+        }
+
+        /// <summary>
+        /// Conversion to <c>bool</c>, which expresses whether the current
+        /// time stamp is valid according to the <see cref="info" />.
+        /// </summary>
+        /// <returns><c>true</c> if the current time step is valid, <c>false</c>
+        /// otherwise.</returns>
+        inline operator bool(void) const {
+            return (this->curTimeStep < this->datInfo.time_steps());
         }
 
     private:
