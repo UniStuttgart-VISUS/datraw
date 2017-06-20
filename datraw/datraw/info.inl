@@ -143,6 +143,7 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
     }
 
     retval.check();
+    retval.datPath = file;
     return retval;
 }
 
@@ -330,6 +331,12 @@ void datraw::info<C>::check(void) {
         }
     }
 
+    if (this->grid_type() != datraw::grid_type::cartesian) {
+        throw std::runtime_error("Only Cartesian grids are supported at the "
+            "moment.");
+        // TODO: implement rectilinear grids.
+    }
+
 #if 0
      case DR_GRID_RECTILINEAR:
          if (strstr(inputLine, "SLICETHICKNESS")) {
@@ -453,11 +460,55 @@ size_t datraw::info<C>::element_size(void) const {
 
 
 /*
+ * datraw::info<C>::evaluate_path
+ */
+template<class C>
+typename datraw::info<C>::string_type datraw::info<C>::evaluate_path(
+        const string_type& path) const {
+    auto len = path.length();
+    auto isAbsolute = false;
+
+    if (len > 0) {
+        if (info::is_dir_sep(path[0])) {
+            isAbsolute = true;
+        }
+#ifdef _WIN32
+        if (((len > 2) && (path[1] == DATRAW_TPL_LITERAL(C, ':')))
+                && info::is_dir_sep(path[2])) {
+            // Note: A path with disk designator is only absolute if followed
+            // by a directory separator as described on
+            // https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
+            isAbsolute = true;
+        }
+#endif /* _WIN32 */
+    }
+
+    if (isAbsolute) {
+        // An absolute path does not need to be modified.
+        return path;
+
+    } else {
+        auto it = std::find_if(this->datPath.rbegin(), this->datPath.rend(),
+            info::is_dir_sep);
+        if (it == this->datPath.rend()) {
+            // The dat file is in the current working directory, so any relative
+            // path in it is valid, too.
+            return path;
+        }
+
+        string_type retval(this->datPath.begin(), it.base());
+        retval += path;
+        return retval;
+    }
+}
+
+
+/*
  * datraw::info<C>::multi_file_name
  */
 template<class C>
 typename datraw::info<C>::string_type datraw::info<C>::multi_file_name(
-        const std::uint64_t timeStep) {
+        const std::uint64_t timeStep) const {
     // Adapted directly from Thomas Klein's code.
     int minWidth, offset, stride;
     auto tpl = info::parse_multi_file_description(this->object_file_name(),
@@ -698,6 +749,34 @@ template<class C>
 typename datraw::info<C>::string_type
 datraw::info<C>::parse_multi_file_description(const string_type& str,
         int& width, int& skip, int& stride) {
+    static const std::basic_regex<char_type> RX(DATRAW_TPL_LITERAL(C,
+        "(%(?:[0\\- ]([0-9]+))?)(?:\\+([0-9]+))?(?:\\*([0-9]+))?d"),
+        std::regex::ECMAScript | std::regex::icase);
+
+    std::match_results<typename string_type::const_iterator> matches;
+    string_type strx = DATRAW_TPL_LITERAL(C, "data%03+1*2d.raw");
+    if (std::regex_search(strx, matches, RX)) {
+        // This was a match, get the groups.
+        auto strWidth = matches.str(2);
+        width = strWidth.empty() ? 0 : info::parse<int>(strWidth);
+
+        auto strSkip = matches.str(3);
+        skip = strWidth.empty() ? 0 : info::parse<int>(strWidth);
+
+        auto strStride = matches.str(4);
+        stride = strWidth.empty() ? 1 : info::parse<int>(strWidth);
+
+        auto retval = std::regex_replace(str, RX, matches.str(1)
+            + DATRAW_TPL_LITERAL(C, "d"));
+        return retval;
+
+    } else {
+        // Not a valid multi-file description.
+        width = skip = stride = 0;
+        return str;
+    }
+
+#if 0
     // TODO: replace with regex
     // Direct adaption of Thomas Klein's code.
     static const auto ASTERISK = DATRAW_TPL_LITERAL(C, '*');
@@ -760,7 +839,7 @@ datraw::info<C>::parse_multi_file_description(const string_type& str,
             skip = skip * 10 + (*s - ZERO);
             s++;
         }
-        memmove(q, s, strlen(s) + 1);
+        std::memmove(q, s, strlen(s) + 1);
         s = q;
     }
 
@@ -778,7 +857,7 @@ datraw::info<C>::parse_multi_file_description(const string_type& str,
             stride = stride * 10 + (*s - ZERO);
             s++;
         }
-        memmove(q, s, strlen(s) + 1);
+        std::memmove(q, s, strlen(s) + 1);
         s = q;
     } else {
         stride = 1;
@@ -792,6 +871,7 @@ datraw::info<C>::parse_multi_file_description(const string_type& str,
     }
 
     return p;
+#endif
 }
 
 

@@ -163,6 +163,7 @@
     <ClInclude Include="datraw\grid_type.h" />
     <ClInclude Include="datraw\info.h" />
     <ClInclude Include="datraw\literal.h" />
+    <ClInclude Include="datraw\raw_reader.h" />
     <ClInclude Include="datraw\scalar_type.h" />
     <ClInclude Include="datraw\convert.h" />
     <ClInclude Include="datraw\types.h" />
@@ -171,6 +172,7 @@
   <ItemGroup>
     <None Include="datraw\convert.inl" />
     <None Include="datraw\info.inl" />
+    <None Include="datraw\raw_reader.inl" />
     <None Include="datraw\variant.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

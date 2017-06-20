@@ -11,6 +11,7 @@
 #if (!defined(__GNUC__) || (__GNUC__ >= 5))
 #include <codecvt>
 #endif /* (!defined(__GNUC__) || (__GNUC__ >= 5)) */
+#include <cstring>
 #include <fstream>
 #include <regex>
 #include <stdexcept>
@@ -250,7 +251,7 @@ namespace datraw {
         static const string_type property_time_steps;
 
         /// <summary>
-        /// TODO: no original documentation
+        /// TODO: no original documentation; I guess this was never implemented.
         /// </summary>
         static const string_type property_vertices;
 
@@ -338,6 +339,23 @@ namespace datraw {
         size_t element_size(void) const;
 
         /// <summary>
+        /// Evaluate a path of a raw file as if it came from the dat file
+        /// represented by this object.
+        /// </summary>
+        /// <remarks>
+        /// A dat file can contain relative paths to a raw file, which are
+        /// relative wrt the location of the dat file. This method checks
+        /// whether the path is absolute or relative, and appends the path to
+        /// the dat file such that the raw file can be opened (given the working
+        /// directory has not been changed between parsing the dat file and
+        /// calling this method.
+        /// </remarks>
+        /// <param name="path">The path to a raw file.</param>
+        /// <returns>The path which should be opened to access the raw data.
+        /// </returns>
+        string_type evaluate_path(const string_type& path) const;
+
+        /// <summary>
         /// Gets the value of the well-known property named
         /// <see cref="property_format" />.
         /// </summary>
@@ -348,7 +366,6 @@ namespace datraw {
             auto v = (*this)[info::property_format];
             return v.get<datraw::scalar_type>();
         }
-
 
         /// <summary>
         /// Gets the value of the well-known property named
@@ -362,7 +379,15 @@ namespace datraw {
             return v.get<datraw::grid_type>();
         }
 
-        string_type multi_file_name(const std::uint64_t timeStep);
+        /// <summary>
+        /// Given that the dat file holds a pattern for a time series, evaluate
+        /// this expression and return the file name of the
+        /// <paramref name="timeStep" />th raw file.
+        /// </summary>
+        /// <param name="timeStep">The time step to retrieve the name of the
+        /// raw file for.</param>
+        /// <returns>The name of the raw file.</returns>
+        string_type multi_file_name(const std::uint64_t timeStep) const;
 
         /// <summary>
         /// Gets the value of the well-known property named
@@ -386,6 +411,15 @@ namespace datraw {
         inline const std::vector<std::uint32_t>& origin(void) const {
             auto& v = (*this)[info::property_origin];
             return v.get<std::vector<std::uint32_t>>();
+        }
+
+        /// <summary>
+        /// Answer the path of the dat file this <see cref="info" /> was parsed
+        /// from.
+        /// </summary>
+        /// <returns>The path to the dat file.</returns>
+        inline const string_type& path(void) const {
+            return this->datPath;
         }
 
         /// <summary>
@@ -415,6 +449,17 @@ namespace datraw {
         /// <returns>The size of an element or 0 in case of an error.</returns>
         inline size_t record_size(void) const {
             return this->element_size();
+        }
+
+        /// <summary>
+        /// Answer whether the bytes in the raw data need to be swapped, ie
+        /// whether the endianness of the data is not the same as the endianness
+        /// of the platform.
+        /// </summary>
+        /// <returns><c>true</c> if the byte order needs to be swapped,
+        /// <c>false</c> otherwise.</returns>
+        inline bool requires_byte_swap(void) const {
+            return (this->byte_order() != info::sys_endianness());
         }
 
         /// <summary>
@@ -521,7 +566,7 @@ namespace datraw {
             datraw::variant_type::uint16, datraw::variant_type::uint32,
             datraw::variant_type::uint64, datraw::variant_type::float32,
             datraw::variant_type::float64> parsable_scalars_t;
-        // Note: 1 byte cannot be parsed from wchar_t string.
+        // TODO: 1 byte cannot be parsed from wchar_t string.
 
         typedef detail::variant_type_list_t</*datraw::variant_type::vec_int8,*/
             datraw::variant_type::vec_int16, datraw::variant_type::vec_int32,
@@ -529,12 +574,25 @@ namespace datraw {
             datraw::variant_type::vec_uint16, datraw::variant_type::vec_uint32,
             datraw::variant_type::vec_uint64, datraw::variant_type::vec_float32,
             datraw::variant_type::vec_float64> parsable_vectors_t;
+        // TODO: 1 byte cannot be parsed from wchar_t string.
 
         /// <summary>
         /// Find, if any, the array entry for the given tag.
         /// </summary>
         template<class T, size_t N>
         static const T *find_tag(const T (&tags)[N], const string_type& tag);
+
+        /// <summary>
+        /// Answer whether <paramref name="c" /> is a valid directory separator.
+        /// </summary>
+        static inline bool is_dir_sep(const char_type c) {
+#ifdef _WIN32
+            return ((c == DATRAW_TPL_LITERAL(C, '\\'))
+                || (c == DATRAW_TPL_LITERAL(C, '/')));
+#else /* _WIN32 */
+            return (c == DATRAW_TPL_LITERAL(C, '/'));
+#endif /* _WIN32 */
+        }
 
         /// <summary>
         /// Parse the given string into a variant of the given type.
@@ -694,6 +752,11 @@ namespace datraw {
         /// file.
         /// </summary>
         typedef std::unordered_map<string_type, variant_type> property_list_type;
+
+        /// <summary>
+        /// The path to the dat file itself.
+        /// </summary>
+        string_type datPath;
 
         /// <summary>
         /// The properties stored in the dat file.
