@@ -9,6 +9,7 @@
 #include "datraw/endianness.h"
 #include "datraw/info.h"
 #include "datraw/literal.h"
+#include "datraw/raw_reader.h"
 #include "datraw/scalar_type.h"
 #include "datraw/types.h"
 #include "datraw/variant.h"

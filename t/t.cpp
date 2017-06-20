@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "datraw.h"
-#include<iterator>
+#include <iterator>
 
 
 int main() {
@@ -66,6 +66,13 @@ int main() {
         datraw::convert<__int64>(x.begin(), x.end(), std::back_inserter(y));
         datraw::convert(x.begin(), x.end(), y.begin());
         datraw::swap_byte_order<sizeof(__int64)>(y.data(), y.size());
+
+        {
+            datraw::raw_reader<char> r(info);
+            auto x = r.read_current(nullptr, 0);
+            auto y = x;
+        }
+
 
         auto winfo = datraw::info<wchar_t>::parse(L"S:\\Daten\\Volumen\\tuebingen\\foot.dat");
     } catch (std::exception& ex) {

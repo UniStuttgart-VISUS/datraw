@@ -42,6 +42,9 @@
     <ClInclude Include="datraw\convert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="datraw\raw_reader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="datraw\info.inl">
@@ -51,6 +54,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="datraw\convert.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="datraw\raw_reader.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
