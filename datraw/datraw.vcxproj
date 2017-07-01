@@ -163,15 +163,18 @@
     <ClInclude Include="datraw\grid_type.h" />
     <ClInclude Include="datraw\info.h" />
     <ClInclude Include="datraw\literal.h" />
+    <ClInclude Include="datraw\parse.h" />
     <ClInclude Include="datraw\raw_reader.h" />
     <ClInclude Include="datraw\scalar_type.h" />
     <ClInclude Include="datraw\convert.h" />
+    <ClInclude Include="datraw\string.h" />
     <ClInclude Include="datraw\types.h" />
     <ClInclude Include="datraw\variant.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="datraw\convert.inl" />
     <None Include="datraw\info.inl" />
+    <None Include="datraw\parse.inl" />
     <None Include="datraw\raw_reader.inl" />
     <None Include="datraw\variant.inl" />
   </ItemGroup>
