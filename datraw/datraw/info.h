@@ -5,16 +5,10 @@
 
 #pragma once
 
-#include <algorithm>
 #include <cassert>
-#include <cctype>
-#if (!defined(__GNUC__) || (__GNUC__ >= 5))
-#include <codecvt>
-#endif /* (!defined(__GNUC__) || (__GNUC__ >= 5)) */
 #include <cstring>
 #include <fstream>
 #include <regex>
-#include <stdexcept>
 #include <streambuf>
 #include <sstream>
 #include <string>
@@ -22,6 +16,8 @@
 #include <vector>
 
 #include "datraw/grid_type.h"
+#include "datraw/parse.h"
+#include "datraw/string.h"
 #include "datraw/types.h"
 #include "datraw/variant.h"
 
@@ -61,24 +57,21 @@ namespace datraw {
         static bool is_multi_file_description(const string_type& str);
 
         /// <summary>
-        /// Ensure a narrow string.
-        /// </summary>
-        inline static const std::string& narrow_string(
-                const std::string& str) {
-            return str;
-        }
-
-        /// <summary>
-        /// Ensure a narrow string.
-        /// </summary>
-        static std::string narrow_string(const std::wstring& str);
-
-        /// <summary>
         /// Parses the given dat file and checks its content.
         /// </summary>
         /// <param name="file">Path to the dat file.</param>
         /// <returns>The parsed dat file.</returns>
-        static info parse(const string_type& file);
+        static info load(const string_type& file);
+
+        /// <summary>
+        /// Parses the given dat file content and checks it.
+        /// </summary>
+        /// <param name="content">The content of a dat file.</param>
+        /// <param name="file">The path to the dat file if relative paths
+        /// to raw files should be resolved.</param>
+        /// <returns>The parsed dat file.</returns>
+        static info parse(const string_type& content,
+            const string_type& file = DATRAW_TPL_LITERAL(C, ""));
 
         /// <summary>
         /// Constant for the byte order of the raw data.
@@ -417,6 +410,12 @@ namespace datraw {
         /// Answer the path of the dat file this <see cref="info" /> was parsed
         /// from.
         /// </summary>
+        /// <remarks>
+        /// This might be an empty string if the information was parsed from an
+        /// in-memory string. In this case, relative paths to raw files cannot
+        /// be resolved correctly unless the working directory matches the
+        /// location of the raw files.
+        /// </remarks>
         /// <returns>The path to the dat file.</returns>
         inline const string_type& path(void) const {
             return this->datPath;
@@ -560,27 +559,21 @@ namespace datraw {
 
     private:
 
-        typedef detail::variant_type_list_t</*datraw::variant_type::int8,*/
+        typedef detail::variant_type_list_t<datraw::variant_type::int8,
             datraw::variant_type::int16, datraw::variant_type::int32,
-            datraw::variant_type::int64, /*datraw::variant_type::uint8,*/
+            datraw::variant_type::int64, datraw::variant_type::uint8,
             datraw::variant_type::uint16, datraw::variant_type::uint32,
             datraw::variant_type::uint64, datraw::variant_type::float32,
-            datraw::variant_type::float64> parsable_scalars_t;
-        // TODO: 1 byte cannot be parsed from wchar_t string.
+            datraw::variant_type::float64, datraw::variant_type::endianness,
+            datraw::variant_type::grid_type, datraw::variant_type::scalar_type>
+            parsable_scalars_t;
 
-        typedef detail::variant_type_list_t</*datraw::variant_type::vec_int8,*/
+        typedef detail::variant_type_list_t<datraw::variant_type::vec_int8,
             datraw::variant_type::vec_int16, datraw::variant_type::vec_int32,
-            datraw::variant_type::vec_int64, /*datraw::variant_type::vec_uint8,*/
+            datraw::variant_type::vec_int64, datraw::variant_type::vec_uint8,
             datraw::variant_type::vec_uint16, datraw::variant_type::vec_uint32,
             datraw::variant_type::vec_uint64, datraw::variant_type::vec_float32,
             datraw::variant_type::vec_float64> parsable_vectors_t;
-        // TODO: 1 byte cannot be parsed from wchar_t string.
-
-        /// <summary>
-        /// Find, if any, the array entry for the given tag.
-        /// </summary>
-        template<class T, size_t N>
-        static const T *find_tag(const T (&tags)[N], const string_type& tag);
 
         /// <summary>
         /// Answer whether <paramref name="c" /> is a valid directory separator.
@@ -612,42 +605,12 @@ namespace datraw {
             const string_type& str, const datraw::variant_type type);
 
         /// <summary>
-        /// Parse one of <tparamref name="T" /> from <paramref name="str" />.
-        /// </summary>
-        template<class T> static T parse(const string_type& str);
-
-        /// <summary>
-        /// Parse one of <see cref="strstrm_parsables_t" /> from
-        /// <paramref name="str" />.
-        /// </summary>
-        template<datraw::variant_type T>
-        static inline typename variant_type::forward_traits<T>::value_type parse(
-                const string_type& str) {
-            return info::parse<typename variant_type::forward_traits<T>::value_type>(str);
-        }
-
-        /// <summary>
-        /// Parses <see cref="endianness" /> from <paramref name="str" />.
-        /// </summary>
-        static variant_type parse_endianness(const string_type& str);
-
-        /// <summary>
-        /// Parses <see cref="grid_type" /> from <paramref name="str" />.
-        /// </summary>
-        static variant_type parse_grid_type(const string_type& str);
-
-        /// <summary>
         /// Parses the given multi-file description, returns a template for the
         /// actual file names and writes the parameters to the given
         /// out-parameters.
         /// </summary>
         static string_type parse_multi_file_description(const string_type& str,
             int& width, int& skip, int& stride);
-
-        /// <summary>
-        /// Parses <see cref="scalar_type" /> from <paramref name="str" />.
-        /// </summary>
-        static variant_type parse_scalar_type(const string_type& str);
 
         /// <summary>
         /// Parse the given string into a vector of the given type.
@@ -703,49 +666,6 @@ namespace datraw {
         /// <returns>Iterators representing the borders of the tokens.</returns>
         template<class I, class... D>
         static std::vector<I> tokenise(I begin, I end, D... delimiters);
-
-        /// <summary>
-        /// Answer an upper case-version of <paramref name="str" />.
-        /// </summary>
-        static inline string_type to_upper(string_type str) {
-            std::transform(str.begin(), str.end(), str.begin(), ::toupper);
-            return str;
-        }
-
-        /// <summary>
-        /// Remove all leading white-space characters from
-        /// <paramref name="str" />.
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        static inline string_type trim_left(const string_type& str) {
-            auto end = str.cend();
-            auto begin = std::find_if(str.cbegin(), end,
-                std::not1(std::ptr_fun<int, int>(std::isspace)));
-            return string_type(begin, str.cend());
-        }
-
-        /// <summary>
-        /// Remove all trailing white-space characters from
-        /// <paramref name="str" />.
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        static inline string_type trim_right(const string_type& str) {
-            auto end = std::find_if(str.crbegin(), str.crend(),
-                std::not1(std::ptr_fun<int, int>(std::isspace)));
-            return string_type(str.cbegin(), end.base());
-        }
-
-        /// <summary>
-        /// Remove all leading and trailing white-space characters from
-        /// <paramref name="str" />.
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        static inline string_type trim(const string_type& str) {
-            return trim_left(trim_right(str));
-        }
 
         /// <summary>
         /// A collection type storing all the properties parsed from the dat

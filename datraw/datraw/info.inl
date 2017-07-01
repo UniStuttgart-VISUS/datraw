@@ -25,21 +25,43 @@ bool datraw::info<C>::is_multi_file_description(const string_type& str) {
 
 
 /*
- * datraw::info<C>::narrow_string
+ * datraw::info<C>::load
  */
 template<class C>
-std::string datraw::info<C>::narrow_string(const std::wstring& str) {
-#if (!defined(__GNUC__) || (__GNUC__ >= 5))
-    static std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-    return cvt.to_bytes(str);
-#else /* (!defined(__GNUC__) || (__GNUC__ >= 5)) */
-    std::string retval;
-    retval.reserve(str.size());
-    for (auto c : str) {
-        retval.push_back(c);
-    }
-    return retval;
-#endif /* (!defined(__GNUC__) || (__GNUC__ >= 5)) */
+datraw::info<C> datraw::info<C>::load(const string_type& file) {
+    static const string_type EMPTY_STRING(DATRAW_TPL_LITERAL(C, ""));
+    static const struct {
+        string_type Tag;
+        datraw::variant_type Type;
+    } KNOWN_PROPERTIES[] = {
+        { info::property_byte_order, datraw::variant_type::endianness },
+        { info::property_components, datraw::variant_type::uint32 },
+        { info::property_data_offset, datraw::variant_type::uint64 },
+        { info::property_dimensions, datraw::variant_type::uint32 },
+        { info::property_format,  datraw::variant_type::scalar_type },
+        { info::property_grid_type, datraw::variant_type::grid_type },
+        { info::property_object_file_name, variant_type::reverse_traits<string_type>::type },
+        { info::property_origin, datraw::variant_type::vec_uint32 },
+        { info::property_resolution, datraw::variant_type::vec_uint32  },
+        { info::property_slice_thickness, datraw::variant_type::vec_float32  },
+        { info::property_tetrahedra, datraw::variant_type::uint64 },
+        { info::property_time_steps, datraw::variant_type::uint64 },
+        { info::property_vertices, datraw::variant_type::uint64 },
+    };
+
+
+    /* Read the whole dat file specified by the user. */
+    string_type content;
+    std::basic_ifstream<char_type> stream(file);
+
+    stream.seekg(0, std::ios::end);
+    content.reserve(static_cast<size_t>(stream.tellg()));
+    stream.seekg(0, std::ios::beg);
+    content.assign((std::istreambuf_iterator<char_type>(stream)),
+        std::istreambuf_iterator<char_type>());
+    stream.close();
+
+    return info::parse(content, file);
 }
 
 
@@ -47,7 +69,8 @@ std::string datraw::info<C>::narrow_string(const std::wstring& str) {
  * datraw::info<C>::parse
  */
 template<class C>
-datraw::info<C> datraw::info<C>::parse(const string_type& file) {
+datraw::info<C> datraw::info<C>::parse(const string_type& content,
+        const string_type& file) {
     static const string_type EMPTY_STRING(DATRAW_TPL_LITERAL(C, ""));
     static const struct {
         string_type Tag;
@@ -68,20 +91,7 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
         { info::property_vertices, datraw::variant_type::uint64 },
     };
 
-
-    string_type content;
     datraw::info<C> retval;
-
-    /* Read the whole dat file specified by the user. */
-    {
-        std::basic_ifstream<char_type> stream(file);
-
-        stream.seekg(0, std::ios::end);
-        content.reserve(static_cast<size_t>(stream.tellg()));
-        stream.seekg(0, std::ios::beg);
-        content.assign((std::istreambuf_iterator<char_type>(stream)),
-            std::istreambuf_iterator<char_type>());
-    }
 
     /* Parse the dat file. */
     auto lines = info::tokenise(content.cbegin(), content.cend(),
@@ -101,7 +111,7 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
             // Line is not empty, not a comment line and contains a valid
             // property name, which ends with a colon.
             auto key = string_type(b, colon);
-            auto ucKey = info::to_upper(key);
+            auto ucKey = detail::to_upper(key);
             auto value = info::skip_spaces(++colon, e);
 
             /* Check for duplicates. */
@@ -112,14 +122,14 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
                 }
                 if (duplicate != retval.properties.end()) {
                     std::stringstream msg;
-                    msg << "Duplicate property \"" << info::narrow_string(key)
+                    msg << "Duplicate property \"" << detail::narrow_string(key)
                         << "\" found at line " << (i + 1) << "." << std::ends;
                     throw std::runtime_error(msg.str());
                 }
             }
 
             /* Check whether we have a known or a custom property. */
-            auto kp = info::find_tag(KNOWN_PROPERTIES, ucKey);
+            auto kp = detail::find_tag(KNOWN_PROPERTIES, ucKey);
             if (kp != nullptr) {
                 // This is one of the known properties which we might perform
                 // special handling for.
@@ -136,7 +146,7 @@ datraw::info<C> datraw::info<C>::parse(const string_type& file) {
             // If there is no colon, we have a syntax error.
             std::stringstream msg;
             msg << "Syntax error in line " << (i + 1) << ": \""
-                << info::narrow_string(string_type(b, e)) << "\"."
+                << detail::narrow_string(string_type(b, e)) << "\"."
                 << std::ends;
             throw std::runtime_error(msg.str());
         } /* end if (colon != e) */
@@ -262,7 +272,7 @@ void datraw::info<C>::check(void) {
         auto& pn = info::property_object_file_name;
         if (!this->contains(pn) || this->object_file_name().empty()) {
             std::stringstream msg;
-            msg << "The property \"" << info::narrow_string(pn) << "\" is "
+            msg << "The property \"" << detail::narrow_string(pn) << "\" is "
                 "mandatory and must be a non-empty string." << std::ends;
             throw std::runtime_error(msg.str());
         }
@@ -272,7 +282,7 @@ void datraw::info<C>::check(void) {
         auto& pn = info::property_format;
         if (!this->contains(pn)) {
             std::stringstream msg;
-            msg << "The property \"" << info::narrow_string(pn) << "\" is "
+            msg << "The property \"" << detail::narrow_string(pn) << "\" is "
                 "mandatory." << std::ends;
             throw std::runtime_error(msg.str());
         }
@@ -395,7 +405,7 @@ void datraw::info<C>::check(void) {
 
         if (this->slice_thickness().size() != this->dimensions()) {
             std::stringstream msg;
-            msg << "The property \"" << info::narrow_string(pn) << "\" "
+            msg << "The property \"" << detail::narrow_string(pn) << "\" "
                 "must specify the slice thickness for all of the "
                 << this->dimensions() << " dimensions." << std::ends;
             throw std::runtime_error(msg.str());
@@ -410,16 +420,16 @@ void datraw::info<C>::check(void) {
                 auto& pn = info::property_resolution;
                 if (!this->contains(pn)) {
                     std::stringstream msg;
-                    msg << "The property \"" << info::narrow_string(pn) << "\" "
-                        "is mandatory for cartesian and rectilinear grids."
+                    msg << "The property \"" << detail::narrow_string(pn) 
+                        << "\" is mandatory for cartesian and rectilinear grids."
                         << std::ends;
                     throw std::runtime_error(msg.str());
                 }
 
                 if (this->resolution().size() != this->dimensions()) {
                     std::stringstream msg;
-                    msg << "The property \"" << info::narrow_string(pn) << "\" "
-                        "must specify the resolution for all of the "
+                    msg << "The property \"" << detail::narrow_string(pn)
+                        << "\" must specify the resolution for all of the "
                         << this->dimensions() << " dimensions." << std::ends;
                     throw std::runtime_error(msg.str());
                 }
@@ -561,7 +571,7 @@ typename datraw::info<C>::variant_type& datraw::info<C>::operator [](
     auto it = this->properties.find(prop);
     if (it == this->properties.end()) {
         std::stringstream msg;
-        msg << "Could not find property \"" << info::narrow_string(prop)
+        msg << "Could not find property \"" << detail::narrow_string(prop)
             << "\" in datraw::info." << std::ends;
         throw std::out_of_range(msg.str());
     }
@@ -578,27 +588,11 @@ const typename datraw::info<C>::variant_type& datraw::info<C>::operator [](
     auto it = this->properties.find(prop);
     if (it == this->properties.end()) {
         std::stringstream msg;
-        msg << "Could not find property \"" << info::narrow_string(prop)
+        msg << "Could not find property \"" << detail::narrow_string(prop)
             << "\" in datraw::info." << std::ends;
         throw std::out_of_range(msg.str());
     }
     return it->second;
-}
-
-
-/*
- * datraw::info<C>::find_tag
- */
-template<class C>
-template<class T, size_t N>
-const T *datraw::info<C>::find_tag(const T(&tags)[N], const string_type& tag) {
-    for (size_t i = 0; i < N; ++i) {
-        if (tags[i].Tag == tag) {
-            return &tags[i];
-        }
-    }
-
-    return nullptr;
 }
 
 
@@ -628,21 +622,9 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse(
             // This is an array of space-separated items.
             return info::parse_vec(parsable_vectors_t(), str, type);
 
-        case datraw::variant_type::scalar_type:
-            // Special handling using lookup table.
-            return info::parse_scalar_type(str);
-
-        case datraw::variant_type::grid_type:
-            // Special handling using lookup table.
-            return info::parse_grid_type(str);
-
-        case datraw::variant_type::endianness:
-            // Special handling using lookup table.
-            return info::parse_endianness(str);
-
         case T:
             // This was a hit for the types in strstrm_parsables_t.
-            return info::parse<T>(str);
+            return datraw::parse<T>(str);
 
         default:
             // No hit, continue searching.
@@ -660,85 +642,9 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse(
         detail::variant_type_list_t<>, const string_type& str,
         const datraw::variant_type type) {
     std::stringstream msg;
-    msg << "\"" << info::narrow_string(str) << "\" cannot be parsed into "
+    msg << "\"" << detail::narrow_string(str) << "\" cannot be parsed into "
         "a variant." << std::ends;
     throw std::invalid_argument(msg.str());
-}
-
-
-/*
- * datraw::info<C>::parse
- */
-template<class C>
-template<class T> T datraw::info<C>::parse(const string_type& str) {
-    std::basic_stringstream<char_type> input(str);
-    T retval;
-
-    if (!(input >> retval)) {
-        std::stringstream msg;
-        msg << "\"" << info::narrow_string(str) << "\" cannot be "
-            "parsed as " << typeid(T).name() << std::ends;
-        throw std::invalid_argument(msg.str());
-    }
-
-    return retval;
-}
-
-
-/*
- * datraw::info<C>::parse_endianness
- */
-template<class C>
-typename datraw::info<C>::variant_type datraw::info<C>::parse_endianness(
-        const string_type& str) {
-    static const struct {
-        string_type Tag;
-        endianness Value;
-    } ENDIANNESSES[] = {
-        { DATRAW_TPL_LITERAL(C, "BIG_ENDIAN"), endianness::big },
-        { DATRAW_TPL_LITERAL(C, "LITTLE_ENDIAN"), endianness::little },
-    };
-
-    auto s = info::to_upper(info::trim(str));
-    auto it = info::find_tag(ENDIANNESSES, s);
-    if (it != nullptr) {
-        return it->Value;
-    } else {
-        std::stringstream msg;
-        msg << "\"" << info::narrow_string(s) << "\" does not designate a "
-            "valid endianness." << std::ends;
-        throw std::invalid_argument(msg.str());
-    }
-}
-
-
-/*
- * datraw::info<C>::parse_grid_type
- */
-template<class C>
-typename datraw::info<C>::variant_type datraw::info<C>::parse_grid_type(
-        const string_type& str) {
-    static const struct {
-        string_type Tag;
-        datraw::grid_type Value;
-    } GRID_TYPES[] = {
-        { DATRAW_TPL_LITERAL(C, "EQUIDISTANT"), grid_type::cartesian },
-        { DATRAW_TPL_LITERAL(C, "CARTESIAN"), grid_type::cartesian },
-        { DATRAW_TPL_LITERAL(C, "UNIFORM"), grid_type::cartesian },
-        { DATRAW_TPL_LITERAL(C, "RECTILINEAR"), grid_type::rectilinear },
-        { DATRAW_TPL_LITERAL(C, "TETRAHEDRA"), grid_type::tetrahedral }
-    };
-
-    auto s = info::to_upper(info::trim(str));
-    auto it = info::find_tag(GRID_TYPES, s);
-    if (it != nullptr) {
-        return it->Value;
-    } else {
-        std::stringstream msg;
-        msg << "\"" << info::narrow_string(s) << "\" is not a valid grid "
-            "type." << std::ends;
-        throw std::invalid_argument(msg.str());
-    }
 }
 
 
@@ -758,13 +664,13 @@ datraw::info<C>::parse_multi_file_description(const string_type& str,
     if (std::regex_search(strx, matches, RX)) {
         // This was a match, get the groups.
         auto strWidth = matches.str(2);
-        width = strWidth.empty() ? 0 : info::parse<int>(strWidth);
+        width = strWidth.empty() ? 0 : datraw::parse<int>(strWidth);
 
         auto strSkip = matches.str(3);
-        skip = strWidth.empty() ? 0 : info::parse<int>(strWidth);
+        skip = strWidth.empty() ? 0 : datraw::parse<int>(strWidth);
 
         auto strStride = matches.str(4);
-        stride = strWidth.empty() ? 1 : info::parse<int>(strWidth);
+        stride = strWidth.empty() ? 1 : datraw::parse<int>(strWidth);
 
         auto retval = std::regex_replace(str, RX, matches.str(1)
             + DATRAW_TPL_LITERAL(C, "d"));
@@ -776,43 +682,6 @@ datraw::info<C>::parse_multi_file_description(const string_type& str,
         return str;
     }
 }
-
-
-/*
- * datraw::info<C>::parse_scalar_type
- */
-template<class C>
-typename datraw::info<C>::variant_type datraw::info<C>::parse_scalar_type(
-        const string_type& str) {
-    static const struct {
-        string_type Tag;
-        datraw::scalar_type Value;
-    } SCALAR_TYPES[] = {
-        { DATRAW_TPL_LITERAL(C, "CHAR"), scalar_type::int8 },
-        { DATRAW_TPL_LITERAL(C, "UCHAR"), scalar_type::uint8 },
-        { DATRAW_TPL_LITERAL(C, "SHORT"), scalar_type::int16 },
-        { DATRAW_TPL_LITERAL(C, "USHORT"), scalar_type::uint16 },
-        { DATRAW_TPL_LITERAL(C, "INT"), scalar_type::int32 },
-        { DATRAW_TPL_LITERAL(C, "UINT"), scalar_type::uint32 },
-        { DATRAW_TPL_LITERAL(C, "LONG"), scalar_type::int64 },
-        { DATRAW_TPL_LITERAL(C, "ULONG"), scalar_type::uint64 },
-        { DATRAW_TPL_LITERAL(C, "HALF"), scalar_type::float16 },
-        { DATRAW_TPL_LITERAL(C, "FLOAT"), scalar_type::float32 },
-        { DATRAW_TPL_LITERAL(C, "DOUBLE"), scalar_type::float64 }
-    };
-
-    auto s = info::to_upper(info::trim(str));
-    auto it = info::find_tag(SCALAR_TYPES, s);
-    if (it != nullptr) {
-        return it->Value;
-    } else {
-        std::stringstream msg;
-        msg << "\"" << info::narrow_string(s) << "\" is not a valid scalar "
-            "type." << std::ends;
-        throw std::invalid_argument(msg.str());
-    }
-}
-
 
 /*
  * datraw::info<C>::parse_vec
@@ -839,7 +708,7 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse_vec(
             auto b = info::skip_spaces(tokens[i], tokens[i + 1]);
             auto e = tokens[i + 1];
             auto s = string_type(b, e);
-            retval.push_back(info::parse<value_type>(s));
+            retval.push_back(datraw::parse<value_type>(s));
         }
 
         return retval;
@@ -859,7 +728,7 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse_vec(
         detail::variant_type_list_t<>, const string_type& str,
         const datraw::variant_type type) {
     std::stringstream msg;
-    msg << "\"" << info::narrow_string(str) << "\" cannot be parsed into "
+    msg << "\"" << detail::narrow_string(str) << "\" cannot be parsed into "
         "a vector variant." << std::ends;
     throw std::invalid_argument(msg.str());
 }

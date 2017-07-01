@@ -22,7 +22,7 @@ typename datraw::raw_reader<C>::size_type datraw::raw_reader<C>::read_current(
     ifstream_type stream(path, ifstream_type::ate | ifstream_type::binary);
     if (!stream.good()) {
         std::stringstream msg;
-        msg << "The raw file \"" << info_type::narrow_string(path)
+        msg << "The raw file \"" << detail::narrow_string(path) 
             << "\" could not be opened." << std::ends;
         throw std::invalid_argument(msg.str());
     }
@@ -34,10 +34,11 @@ typename datraw::raw_reader<C>::size_type datraw::raw_reader<C>::read_current(
         stream.read(static_cast<char *>(dst), cntDst);
 
         if (this->datInfo.requires_byte_swap()) {
+            assert(this->datInfo.format() != scalar_type::raw);
             auto ss = this->datInfo.scalar_size();
             if ((retval % ss) != 0) {
                 std::stringstream msg;
-                msg << "The raw file \"" << info_type::narrow_string(path)
+                msg << "The raw file \"" << detail::narrow_string(path)
                     << "\" contains " << retval << " bytes, which is not "
                     << "divisible by the size of a scalar (" << ss << ")."
                     << std::ends;
