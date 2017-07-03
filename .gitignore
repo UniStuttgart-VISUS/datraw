@@ -3,7 +3,8 @@
 ################################################################################
 
 /datraw/.vs/datraw/v14
-/datraw/Win32/Debug
+/datraw/Win32
+/datraw/x64
 *.db
 *.opendb
 /.vs/datraw/v14
@@ -12,3 +13,5 @@
 /Win32/Debug
 /Debug
 /ipch
+/test/x64
+/test/Win32
