@@ -120,13 +120,13 @@ Format:	USHORT\n\
 
             {
                 auto input = DATRAW_TPL_LITERAL(C, "\
-ObjectFileName:	veiled-chameleon.u8.raw\n\
-Resolution:	1024 1024 1080\n\
-SliceThickness:	0.0016276 0.0016276 0.00185185\n\
-Format:		UCHAR\n\
-ObjectModel:	I\n\
-Modality:	unknown\n\
-Checksum:	4c830a96d2db5c779d6f10ff31f1dd21\n\
+    ObjectFileName:	veiled-chameleon.u8.raw\n\
+    Resolution:	1024 1024 1080\n\
+    SliceThickness:	0.0016276 0.0016276 0.00185185\n\
+    Format:		UCHAR\n\
+    ObjectModel:	I\n\
+    Modality:	unknown\n\
+    Checksum:	4c830a96d2db5c779d6f10ff31f1dd21\n\
 ");
                 auto i = info::parse(input);
                 Assert::IsTrue(i.object_file_name() == DATRAW_TPL_LITERAL(C, "veiled-chameleon.u8.raw"), L"Object file name was parsed correctly.");
