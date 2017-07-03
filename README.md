@@ -22,3 +22,21 @@ In principle, arbitrary properties can be stored. However, some properties have 
 
 ## The raw file
 The raw file stores binary as an M-dimensional array of N-dimensional tuples. All elements of the tuple need to have the same type.
+
+## Usage
+The library represents the dat file in the `info` class and provides access to the raw file(s) by means of the `raw_reader` class. The `raw_reader` can either be created from the path to a dat file or from an existing in-memory `info` instance.
+
+All classes are templated with the character type (`char` or `wchar_t`) and located in the `datraw` namespace. 
+
+```C++
+#include "datraw.h"
+
+typedef datraw::info<char> info;
+typedef datraw::raw_reader<char> reader;
+
+reader r = reader::open("foot.dat");
+while (r) {
+    std::vector<datraw::uint8> raw = r.read_current();
+    r.move_next();
+}
+```
