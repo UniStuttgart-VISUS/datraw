@@ -29,30 +29,15 @@ bool datraw::info<C>::is_multi_file_description(const string_type& str) {
  */
 template<class C>
 datraw::info<C> datraw::info<C>::load(const string_type& file) {
-    static const string_type EMPTY_STRING(DATRAW_TPL_LITERAL(C, ""));
-    static const struct {
-        string_type Tag;
-        datraw::variant_type Type;
-    } KNOWN_PROPERTIES[] = {
-        { info::property_byte_order, datraw::variant_type::endianness },
-        { info::property_components, datraw::variant_type::uint32 },
-        { info::property_data_offset, datraw::variant_type::uint64 },
-        { info::property_dimensions, datraw::variant_type::uint32 },
-        { info::property_format,  datraw::variant_type::scalar_type },
-        { info::property_grid_type, datraw::variant_type::grid_type },
-        { info::property_object_file_name, variant_type::reverse_traits<string_type>::type },
-        { info::property_origin, datraw::variant_type::vec_uint32 },
-        { info::property_resolution, datraw::variant_type::vec_uint32  },
-        { info::property_slice_thickness, datraw::variant_type::vec_float32  },
-        { info::property_tetrahedra, datraw::variant_type::uint64 },
-        { info::property_time_steps, datraw::variant_type::uint64 },
-        { info::property_vertices, datraw::variant_type::uint64 },
-    };
-
-
-    /* Read the whole dat file specified by the user. */
     string_type content;
     std::basic_ifstream<char_type> stream(file);
+
+    if (!stream) {
+        std::stringstream msg;
+        msg << "Failed opening dat file \"" << detail::narrow_string(file)
+            << "\".";
+        throw std::runtime_error(msg.str());
+    }
 
     stream.seekg(0, std::ios::end);
     content.reserve(static_cast<size_t>(stream.tellg()));
@@ -123,7 +108,7 @@ datraw::info<C> datraw::info<C>::parse(const string_type& content,
                 if (duplicate != retval.properties.end()) {
                     std::stringstream msg;
                     msg << "Duplicate property \"" << detail::narrow_string(key)
-                        << "\" found at line " << (i + 1) << "." << std::ends;
+                        << "\" found at line " << (i + 1) << ".";
                     throw std::runtime_error(msg.str());
                 }
             }
@@ -146,8 +131,7 @@ datraw::info<C> datraw::info<C>::parse(const string_type& content,
             // If there is no colon, we have a syntax error.
             std::stringstream msg;
             msg << "Syntax error in line " << (i + 1) << ": \""
-                << detail::narrow_string(string_type(b, e)) << "\"."
-                << std::ends;
+                << detail::narrow_string(string_type(b, e)) << "\".";
             throw std::runtime_error(msg.str());
         } /* end if (colon != e) */
     }
@@ -273,7 +257,7 @@ void datraw::info<C>::check(void) {
         if (!this->contains(pn) || this->object_file_name().empty()) {
             std::stringstream msg;
             msg << "The property \"" << detail::narrow_string(pn) << "\" is "
-                "mandatory and must be a non-empty string." << std::ends;
+                "mandatory and must be a non-empty string.";
             throw std::runtime_error(msg.str());
         }
     }
@@ -283,7 +267,7 @@ void datraw::info<C>::check(void) {
         if (!this->contains(pn)) {
             std::stringstream msg;
             msg << "The property \"" << detail::narrow_string(pn) << "\" is "
-                "mandatory." << std::ends;
+                "mandatory.";
             throw std::runtime_error(msg.str());
         }
     }
@@ -407,7 +391,7 @@ void datraw::info<C>::check(void) {
             std::stringstream msg;
             msg << "The property \"" << detail::narrow_string(pn) << "\" "
                 "must specify the slice thickness for all of the "
-                << this->dimensions() << " dimensions." << std::ends;
+                << this->dimensions() << " dimensions.";
             throw std::runtime_error(msg.str());
         }
     }
@@ -420,9 +404,9 @@ void datraw::info<C>::check(void) {
                 auto& pn = info::property_resolution;
                 if (!this->contains(pn)) {
                     std::stringstream msg;
-                    msg << "The property \"" << detail::narrow_string(pn) 
-                        << "\" is mandatory for cartesian and rectilinear grids."
-                        << std::ends;
+                    msg << "The property \"" << detail::narrow_string(pn)
+                        << "\" is mandatory for cartesian and rectilinear "
+                        << "grids.";
                     throw std::runtime_error(msg.str());
                 }
 
@@ -430,7 +414,7 @@ void datraw::info<C>::check(void) {
                     std::stringstream msg;
                     msg << "The property \"" << detail::narrow_string(pn)
                         << "\" must specify the resolution for all of the "
-                        << this->dimensions() << " dimensions." << std::ends;
+                        << this->dimensions() << " dimensions.";
                     throw std::runtime_error(msg.str());
                 }
             }
@@ -572,7 +556,7 @@ typename datraw::info<C>::variant_type& datraw::info<C>::operator [](
     if (it == this->properties.end()) {
         std::stringstream msg;
         msg << "Could not find property \"" << detail::narrow_string(prop)
-            << "\" in datraw::info." << std::ends;
+            << "\" in datraw::info.";
         throw std::out_of_range(msg.str());
     }
     return it->second;
@@ -589,7 +573,7 @@ const typename datraw::info<C>::variant_type& datraw::info<C>::operator [](
     if (it == this->properties.end()) {
         std::stringstream msg;
         msg << "Could not find property \"" << detail::narrow_string(prop)
-            << "\" in datraw::info." << std::ends;
+            << "\" in datraw::info.";
         throw std::out_of_range(msg.str());
     }
     return it->second;
@@ -643,7 +627,7 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse(
         const datraw::variant_type type) {
     std::stringstream msg;
     msg << "\"" << detail::narrow_string(str) << "\" cannot be parsed into "
-        "a variant." << std::ends;
+        "a variant.";
     throw std::invalid_argument(msg.str());
 }
 
@@ -729,7 +713,7 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse_vec(
         const datraw::variant_type type) {
     std::stringstream msg;
     msg << "\"" << detail::narrow_string(str) << "\" cannot be parsed into "
-        "a vector variant." << std::ends;
+        "a vector variant.";
     throw std::invalid_argument(msg.str());
 }
 
