@@ -65,7 +65,7 @@ namespace datraw {
         /// </returns>
         static inline raw_reader open(const string_type& datPath) {
             raw_reader retval;
-            retval.datInfo = info_type::parse(datPath);
+            retval.datInfo = info_type::load(datPath);
             return retval;
         }
 
