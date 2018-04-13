@@ -678,7 +678,6 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse_vec(
     typedef typename variant_type::forward_traits<T>::value_type vector_type;
     typedef typename vector_type::value_type value_type;
 
-
     if (type == T) {
         // This is the right implementation.
         vector_type retval;

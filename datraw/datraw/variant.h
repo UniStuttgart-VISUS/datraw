@@ -450,19 +450,6 @@ namespace detail {
         typedef C char_type;
 
         /// <summary>
-        /// The forward traits type resolving <see cref="variant_type" />
-        /// members.
-        /// </summary>
-        template<variant_type T>
-        using forward_traits = detail::variant_fwd_traits<C, T>;
-
-        /// <summary>
-        /// The reverse traits type resolving C++ types.
-        /// </summary>
-        template<class T>
-        using reverse_traits = detail::variant_rev_traits<C, T>;
-
-        /// <summary>
         /// The string type used by the variant.
         /// </summary>
         typedef std::basic_string<char_type> string_type;
@@ -556,9 +543,10 @@ namespace detail {
         /// <see cref="datraw::variant::type" />.</tparam>
         /// <returns>The current value of the variant.</returns>
         template<variant_type T>
-        const typename forward_traits<T>::value_type& get(void) const {
+        const typename detail::variant<C, T>::value_type& get(void) const {
+            typedef detail::variant_fwd_traits<char_type, T> traits;
             assert(this->cur_type == T);
-            return *forward_traits<T>::get(this->data);
+            return *traits::get(this->data);
         }
 
         /// <summary>
@@ -573,8 +561,9 @@ namespace detail {
         /// <tparam name="T">The C++ currently stored in the variant.</tparam>
         /// <returns>The current value of the variant.</returns>
         template<class T> const T& get(void) const {
-            assert(this->cur_type == reverse_traits<T>::type);
-            return *reverse_traits<T>::get(this->data);
+            typedef detail::variant_rev_traits<char_type, T> traits;
+            assert(this->cur_type == traits::type);
+            return *traits::get(this->data);
         }
 
         /// <summary>
@@ -593,8 +582,9 @@ namespace detail {
         /// <param name="value">The new value of the variant.</param>
         /// <tparam name="T">The new type of the variant.</tparam>
         template<variant_type T>
-        void set(const typename forward_traits<T>::value_type& value) {
-            typedef forward_traits<T> traits;
+        void set(const typename detail::variant_fwd_traits<C, T>::value_type&
+                value) {
+            typedef detail::variant_fwd_traits<char_type, T> traits;
             this->reconstruct<T>();
             *traits::get(this->data) = value;
         }
@@ -606,7 +596,7 @@ namespace detail {
         /// <tparam name="T">The type of the new value.</tparam>
         template<class T> void set(const T& value) {
             typedef typename std::decay<T>::type type;
-            typedef reverse_traits<type> traits;
+            typedef detail::variant_rev_traits<char_type, type> traits;
             this->reconstruct<traits::type>();
             *traits::get(this->data) = value;
         }
@@ -617,8 +607,9 @@ namespace detail {
         /// <param name="value">The new value of the variant.</param>
         /// <tparam name="T">The new type of the variant.</tparam>
         template<variant_type T>
-        void set(typename forward_traits<T>::value_type&& value) {
-            typedef forward_traits<T> traits;
+        void set(typename details::variant_fwd_traits<C, T>::value_type&&
+                value) {
+            typedef detail::variant_fwd_traits<char_type, T> traits;
             this->reconstruct<T>();
             *traits::get(this->data) = std::move(value);
         }
@@ -630,7 +621,7 @@ namespace detail {
         /// <tparam name="T">The type of the new value.</tparam>
         template<class T> void set(T&& value) {
             typedef typename std::decay<T>::type type;
-            typedef reverse_traits<type> traits;
+            typedef detail::variant_rev_traits<char_type, type> traits;
             this->reconstruct<traits::type>();
             *traits::get(this->data) = std::move(value);
         }
@@ -652,7 +643,8 @@ namespace detail {
         /// <param name="rhs">The right hand side operand.</param>
         /// <returns><c>*this</c></returns>
         template<variant_type T> inline basic_variant& operator =(
-                const typename forward_traits<T>::value_type& rhs) const {
+                const typename detail::variant_fwd_traits<C, T>::value_type&
+                rhs) const {
             this->set(rhs);
             return *this;
         }
@@ -797,8 +789,8 @@ namespace detail {
         /// <tparam name="T">The new type of the variant, which should be
         /// initialised by the method.</tparam>
         template<variant_type T> inline void reconstruct(void) {
-            typedef basic_variant::forward_traits<T> traits;
-            typedef typename forward_traits<T>::value_type type;
+            typedef details::variant_fwd_traits<C, T> traits;
+            typedef typename traits::value_type type;
             this->conditional_invoke<detail::destruct>();
             ::new (traits::get(this->data)) type();
             this->cur_type = T;
