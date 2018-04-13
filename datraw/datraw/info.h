@@ -6,6 +6,7 @@
 #pragma once
 
 #include <cassert>
+#include <cinttypes>
 #include <climits>
 #include <cstring>
 #include <fstream>
