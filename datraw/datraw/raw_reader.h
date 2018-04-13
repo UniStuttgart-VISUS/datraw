@@ -34,7 +34,7 @@ namespace datraw {
         /// The type of the <see cref="info" /> object representing the dat
         /// file.
         /// </summary>
-        typedef info<char_type> info_type;
+        typedef datraw::info<char_type> info_type;
 
         /// <summary>
         /// The type to express file sizes.

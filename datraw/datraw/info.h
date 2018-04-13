@@ -6,6 +6,7 @@
 #pragma once
 
 #include <cassert>
+#include <climits>
 #include <cstring>
 #include <fstream>
 #include <regex>
