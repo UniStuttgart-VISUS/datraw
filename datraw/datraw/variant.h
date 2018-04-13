@@ -542,9 +542,9 @@ namespace detail {
         /// matching the value currently returned by
         /// <see cref="datraw::variant::type" />.</tparam>
         /// <returns>The current value of the variant.</returns>
-        template<variant_type T>
-        const typename detail::variant<C, T>::value_type& get(void) const {
-            typedef detail::variant_fwd_traits<char_type, T> traits;
+        template<datraw::variant_type T>
+        const typename detail::variant_fwd_traits<C, T>::type& get(void) const {
+            typedef detail::variant_fwd_traits<C, T> traits;
             assert(this->cur_type == T);
             return *traits::get(this->data);
         }
@@ -558,10 +558,11 @@ namespace detail {
         /// legal to retrieve the value as the specified type. It is up to the
         /// user to check this beforehand.
         /// </remarks>
-        /// <tparam name="T">The C++ currently stored in the variant.</tparam>
+        /// <tparam name="T">The C++ type currently stored in the variant.
+        /// </tparam>
         /// <returns>The current value of the variant.</returns>
         template<class T> const T& get(void) const {
-            typedef detail::variant_rev_traits<char_type, T> traits;
+            typedef detail::variant_rev_traits<C, T> traits;
             assert(this->cur_type == traits::type);
             return *traits::get(this->data);
         }
@@ -607,8 +608,7 @@ namespace detail {
         /// <param name="value">The new value of the variant.</param>
         /// <tparam name="T">The new type of the variant.</tparam>
         template<variant_type T>
-        void set(typename details::variant_fwd_traits<C, T>::value_type&&
-                value) {
+        void set(typename detail::variant_fwd_traits<C, T>::type&& value) {
             typedef detail::variant_fwd_traits<char_type, T> traits;
             this->reconstruct<T>();
             *traits::get(this->data) = std::move(value);
@@ -789,7 +789,7 @@ namespace detail {
         /// <tparam name="T">The new type of the variant, which should be
         /// initialised by the method.</tparam>
         template<variant_type T> inline void reconstruct(void) {
-            typedef details::variant_fwd_traits<C, T> traits;
+            typedef detail::variant_fwd_traits<C, T> traits;
             typedef typename traits::value_type type;
             this->conditional_invoke<detail::destruct>();
             ::new (traits::get(this->data)) type();
