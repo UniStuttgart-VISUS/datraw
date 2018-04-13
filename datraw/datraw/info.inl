@@ -67,7 +67,7 @@ datraw::info<C> datraw::info<C>::parse(const string_type& content,
         { info::property_dimensions, datraw::variant_type::uint32 },
         { info::property_format,  datraw::variant_type::scalar_type },
         { info::property_grid_type, datraw::variant_type::grid_type },
-        { info::property_object_file_name, variant_type::reverse_traits<string_type>::type },
+        { info::property_object_file_name, detail::variant_rev_traits<C, string_type>::type },
         { info::property_origin, datraw::variant_type::vec_uint32 },
         { info::property_resolution, datraw::variant_type::vec_uint32  },    // if (!(info->resolution = (int*)malloc(info->dimensions * sizeof(int)))) {
         { info::property_slice_thickness, datraw::variant_type::vec_float32  },
@@ -675,7 +675,7 @@ template<datraw::variant_type T, datraw::variant_type... Ts>
 typename datraw::info<C>::variant_type datraw::info<C>::parse_vec(
         detail::variant_type_list_t<T, Ts...>, const string_type& str,
         const datraw::variant_type type) {
-    typedef typename variant_type::forward_traits<T>::value_type vector_type;
+    typedef typename detail::variant_fwd_traits<C, T>::value_type vector_type;
     typedef typename vector_type::value_type value_type;
 
     if (type == T) {
