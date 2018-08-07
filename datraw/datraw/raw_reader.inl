@@ -26,7 +26,7 @@ typename datraw::raw_reader<C>::size_type datraw::raw_reader<C>::read_current(
             << "\" could not be opened." << std::ends;
         throw std::invalid_argument(msg.str());
     }
-    auto retval = stream.tellg();
+    auto retval = static_cast<size_t>(stream.tellg());
 
     // Read the data if possible.
     if ((dst != nullptr) && (cntDst >= retval)) {
