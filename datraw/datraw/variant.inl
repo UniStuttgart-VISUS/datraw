@@ -20,7 +20,8 @@ void datraw::detail::copy_to<C, T>::invoke(const type& v,
 template<class C, datraw::variant_type T>
 void datraw::detail::is_same<C, T>::invoke(type& v, const variant_type& rhs,
         bool& retval) {
-    retval = (v == rhs.get<type>());
+    // Cf. https://stackoverflow.com/questions/3505713/c-template-compilation-error-expected-primary-expression-before-token
+    retval = (v == rhs.template get<T>());
 }
 
 

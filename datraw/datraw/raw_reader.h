@@ -34,7 +34,7 @@ namespace datraw {
         /// The type of the <see cref="info" /> object representing the dat
         /// file.
         /// </summary>
-        typedef info<char_type> info_type;
+        typedef datraw::info<char_type> info_type;
 
         /// <summary>
         /// The type to express file sizes.
@@ -65,7 +65,7 @@ namespace datraw {
         /// </returns>
         static inline raw_reader open(const string_type& datPath) {
             raw_reader retval;
-            retval.datInfo = info_type::parse(datPath);
+            retval.datInfo = info_type::load(datPath);
             return retval;
         }
 
@@ -115,13 +115,25 @@ namespace datraw {
         }
 
         /// <summary>
-        /// Move to the next time step and anwer whether this is valid according
+        /// Move to the next time step and answer whether this is valid according
         /// to the <see cref="info" />.
         /// </summary>
         /// <returns><c>true</c> if the new time step is valid, <c>false</c>
         /// otherwise.</returns>
         inline bool move_next(void) {
             ++this->curTimeStep;
+            return static_cast<bool>(*this);
+        }
+
+        /// <summary>
+        /// Move to the specified time step and answer whether said time step is
+        /// valid according to the <see cref="info" />.
+        /// </summary>
+        /// <param name="timeStep">The target time step.</param>
+        /// <returns><c>true</c> if the new time step is valid, <c>false</c>
+        /// otherwise.</returns>
+        inline bool move_to(const time_step_type timeStep) {
+            this->curTimeStep = timeStep;
             return static_cast<bool>(*this);
         }
 

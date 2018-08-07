@@ -6,6 +6,8 @@
 #pragma once
 
 #include <cassert>
+#include <cinttypes>
+#include <climits>
 #include <cstring>
 #include <fstream>
 #include <regex>
@@ -262,7 +264,7 @@ namespace datraw {
         /// in the object.</exception>
         inline datraw::endianness byte_order(void) const {
             auto v = (*this)[info::property_byte_order];
-            return v.get<datraw::endianness>();
+            return v.template get<datraw::endianness>();
         }
 
         /// <summary>
@@ -284,7 +286,7 @@ namespace datraw {
         /// in the object.</exception>
         inline std::uint32_t components(void) const {
             auto v = (*this)[info::property_components];
-            return v.get<std::uint32_t>();
+            return v.template get<std::uint32_t>();
         }
 
         /// <summary>
@@ -307,7 +309,7 @@ namespace datraw {
         /// in the object.</exception>
         inline std::uint64_t data_offset(void) const {
             auto v = (*this)[info::property_data_offset];
-            return v.get<std::uint64_t>();
+            return v.template get<std::uint64_t>();
         }
 
         /// <summary>
@@ -319,7 +321,7 @@ namespace datraw {
         /// in the object.</exception>
         inline std::uint32_t dimensions(void) const {
             auto v = (*this)[info::property_dimensions];
-            return v.get<std::uint32_t>();
+            return v.template get<std::uint32_t>();
         }
 
         /// <summary>
@@ -357,7 +359,7 @@ namespace datraw {
         /// in the object.</exception>
         inline datraw::scalar_type format(void) const {
             auto v = (*this)[info::property_format];
-            return v.get<datraw::scalar_type>();
+            return v.template get<datraw::scalar_type>();
         }
 
         /// <summary>
@@ -369,7 +371,7 @@ namespace datraw {
         /// in the object.</exception>
         inline datraw::grid_type grid_type(void) const {
             auto v = (*this)[info::property_grid_type];
-            return v.get<datraw::grid_type>();
+            return v.template get<datraw::grid_type>();
         }
 
         /// <summary>
@@ -391,7 +393,7 @@ namespace datraw {
         /// in the object.</exception>
         inline string_type object_file_name(void) const {
             auto v = (*this)[info::property_object_file_name];
-            return v.get<string_type>();
+            return v.template get<string_type>();
         }
 
         /// <summary>
@@ -403,7 +405,7 @@ namespace datraw {
         /// in the object.</exception>
         inline const std::vector<std::uint32_t>& origin(void) const {
             auto& v = (*this)[info::property_origin];
-            return v.get<std::vector<std::uint32_t>>();
+            return v.template get<std::vector<std::uint32_t>>();
         }
 
         /// <summary>
@@ -470,7 +472,7 @@ namespace datraw {
         /// in the object.</exception>
         inline std::vector<std::uint32_t> resolution(void) const {
             auto v = (*this)[info::property_resolution];
-            return v.get<std::vector<std::uint32_t>>();
+            return v.template get<std::vector<std::uint32_t>>();
         }
 
         /// <summary>
@@ -497,7 +499,7 @@ namespace datraw {
         /// in the object.</exception>
         inline std::vector<float> slice_thickness(void) const {
             auto v = (*this)[info::property_slice_thickness];
-            return v.get<std::vector<float>>();
+            return v.template get<std::vector<float>>();
         }
 
         /// <summary>
@@ -509,7 +511,7 @@ namespace datraw {
         /// in the object.</exception>
         inline std::uint64_t tetrahedra(void) const {
             auto v = (*this)[info::property_tetrahedra];
-            return v.get<std::uint64_t>();
+            return v.template get<std::uint64_t>();
         }
 
         /// <summary>
@@ -522,7 +524,7 @@ namespace datraw {
         /// in the object.</exception>
         inline std::uint64_t time_steps(void) const {
             auto v = (*this)[info::property_time_steps];
-            return v.get<std::uint64_t>();
+            return v.template get<std::uint64_t>();
         }
 
         /// <summary>
@@ -534,7 +536,7 @@ namespace datraw {
         /// in the object.</exception>
         inline std::uint64_t vertices(void) const {
             auto v = (*this)[info::property_vertices];
-            return v.get<std::uint64_t>();
+            return v.template get<std::uint64_t>();
         }
 
         /// <summary>
