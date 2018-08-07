@@ -1,5 +1,5 @@
 /// <copyright file="convert.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-/// Copyright © 2017 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
+/// Copyright © 2017 -2018 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
 /// </copyright>
 /// <author>Christoph Müller</author>
 
@@ -9,8 +9,62 @@
  */
 template<class T, class I, class O>
 void datraw::convert(I begin, I end , O dst) {
-    while (begin != end) {
-        *dst++ = static_cast<T>(*begin++);
+    typedef typename I::value_type S;
+
+    if (std::is_same<S, T>::value) {
+        // This is an identity transform.
+        std::copy(begin, end, dst);
+
+    } else if (std::is_floating_point<S>::value
+            && std::is_floating_point<T>::value) {
+        // Floating point conversion happens by simple cast, because we assume
+        // floating point data sets to have values within [0, 1].
+        std::transform(begin, end, dst,
+            [](const S s) { return static_cast<T>(s); });
+
+    } else if (std::is_floating_point<T>::value) {
+        // Conversion from integral to [0, 1] floating point range.
+        assert(!std::is_floating_point<S>::value);
+        auto tmin = std::numeric_limits<S>::lowest();
+        auto tmax = (std::numeric_limits<S>::max)();
+        auto trange = static_cast<T>(tmax - tmin);
+
+        while (begin != end) {
+            auto value = static_cast<T>(*begin++);
+            value /= trange;
+            *dst++ = value;
+        }
+
+    } else if (std::is_floating_point<S>::value) {
+        // Conversion from [0, 1] to integral type.
+        assert(!std::is_floating_point<T>::value);
+        auto tmin = static_cast<S>(std::numeric_limits<T>::lowest());
+        auto tmax = static_cast<S>((std::numeric_limits<T>::max)());
+        auto trange = tmax - tmin;
+
+        while (begin != end) {
+            auto value = *begin++;
+            value *= trange;
+            value += tmin;
+            *dst++ = static_cast<T>(value);
+        }
+
+    } else {
+        // All other conversions require both data type ranges.
+        auto smin = static_cast<double>(std::numeric_limits<S>::lowest());
+        auto smax = static_cast<double>((std::numeric_limits<S>::max)());
+        auto tmin = static_cast<double>(std::numeric_limits<T>::lowest());
+        auto tmax = static_cast<double>((std::numeric_limits<T>::max)());
+        auto srange = smax - smin;
+        auto trange = tmax - tmin;
+
+        while (begin != end) {
+            auto value = static_cast<double>(*begin++);
+            value = (value - smin) / srange;
+            value *= trange;
+            value += tmin;
+            *dst++ = static_cast<T>(value);
+        }
     }
 }
 

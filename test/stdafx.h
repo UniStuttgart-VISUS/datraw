@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include <algorithm>
+#include <numeric>
+
 #include "targetver.h"
 #include <Windows.h>
 
