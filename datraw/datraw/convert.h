@@ -5,7 +5,10 @@
 
 #pragma once
 
+#include <algorithm>
+#include <cassert>
 #include <cinttypes>
+#include <limits>
 
 
 namespace datraw {
