@@ -19,6 +19,18 @@ namespace datraw {
     /// <paramref name="end" /> to type <tparamref name="T" /> and write the
     /// result to <paramref name="dst" />.
     /// </summary>
+    /// <remarks>
+    /// <para>The following conversion rules apply: If the type iterated by
+    /// <typeparamref name="O" /> and <typeparamref name="T" /> are the same,
+    /// a simple copy is performed. If both types are floating point types, a
+    /// cast is performed, assuming that the data are within [0, 1].</para>
+    /// <para>For all floating point types, it is assumed that valid values are
+    /// within [0, 1]. Conversion to integral types is performed by scaling the
+    /// values to the range of the type.</para>
+    /// <para>Conversions from integral to other integral types are performed by
+    /// rescaling to the range of <typeparamref name="T" /> via double precision
+    /// floating point arithmetics.</para>
+    /// </remarks>
     /// <tparam name="T">The target type.</tparam>
     /// <tparam name="I">The type of the input iterator.</tparam>
     /// <tparam name="O">The type of the output iterator.</tparam>
