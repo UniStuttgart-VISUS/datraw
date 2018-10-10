@@ -18,3 +18,4 @@
 /.vs/datraw/v15
 /Win32/Release
 /x64
+*.nupkg
