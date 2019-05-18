@@ -13,7 +13,12 @@ void datraw::convert(I begin, I end , O dst) {
 
     if (std::is_same<S, T>::value) {
         // This is an identity transform.
-        std::copy(begin, end, dst);
+#pragma warning(push)
+#pragma warning(disable: 4244)	
+		// The if above ensures that this code is not called in cases where the
+		// warning is valid.
+		std::copy(begin, end, dst);
+#pragma warning(pop)
 
     } else if (std::is_floating_point<S>::value
             && std::is_floating_point<T>::value) {

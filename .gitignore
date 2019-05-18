@@ -19,3 +19,4 @@
 /Win32/Release
 /x64
 *.nupkg
+/.vs
