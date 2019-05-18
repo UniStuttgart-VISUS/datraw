@@ -1,23 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
-    <metadata>
-        <id>datraw</id>
-        <version>$version$</version>
-        <title>datraw</title>
-        <authors>Christoph Müller</authors>
-        <owners>mueller</owners>
-        <licenseUrl>https://github.com/UniStuttgart-VISUS/datraw/blob/master/LICENCE.md</licenseUrl>
-        <projectUrl>https://github.com/UniStuttgart-VISUS/datraw</projectUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>This library allows for reading volumetric data sets stored in the dat/raw format, which consists of a textual description of the data format in the dat file and the raw voxel data in one or more raw files.</description>
-        <summary>A C++ header-only library for dat/raw volume data sets.</summary>
-        <releaseNotes>Initial release.</releaseNotes>
-        <copyright>Copyright © 2018 Visualisierungsinstitut der Universität Stuttgart</copyright>
-        <tags>native mmpld particles</tags>
-    </metadata>
-    <files>
-        <file src="datraw.h" target="build\native\include" />
-        <file src="datraw\**" target="build\native\include\datraw" />
-        <file src="datraw.targets" target="build\native\datraw.targets" />
-    </files>
+  <metadata>
+    <id>datraw</id>
+    <version>$version$</version>
+    <title>datraw</title>
+    <authors>Christoph Müller</authors>
+    <owners>mueller</owners>
+    <projectUrl>https://github.com/UniStuttgart-VISUS/datraw</projectUrl>
+    <license type="expression">MIT</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This library allows for reading volumetric data sets stored in the dat/raw format, which consists of a textual description of the data format in the dat file and the raw voxel data in one or more raw files.</description>
+    <summary>A C++ header-only library for dat/raw volume data sets.</summary>
+    <releaseNotes>Fixed issue with new version of VC++ 2017 compiler.</releaseNotes>
+    <copyright>Copyright © 2018 - 2019 Visualisierungsinstitut der Universität Stuttgart</copyright>
+    <tags>native mmpld particles</tags>
+  </metadata>
+  <files>
+    <file src="datraw.h" target="build\native\include" />
+    <file src="datraw\**" target="build\native\include\datraw" />
+    <file src="datraw.targets" target="build\native\datraw.targets" />
+  </files>
 </package>
