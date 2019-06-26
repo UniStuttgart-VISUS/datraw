@@ -383,7 +383,7 @@ void datraw::info<C>::check(void) {
         if (!this->contains(pn)) {
             typename std::decay<decltype(this->slice_thickness())>::type v;
             v.resize(this->dimensions());
-            std::fill(v.begin(), v.end(), 1);
+            std::fill(v.begin(), v.end(), 1.0f);
             this->properties[pn] = v;
         }
 
