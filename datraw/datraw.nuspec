@@ -13,7 +13,7 @@
         <summary>A C++ header-only library for dat/raw volume data sets.</summary>
         <releaseNotes>Initial release.</releaseNotes>
         <copyright>Copyright © 2018 Visualisierungsinstitut der Universität Stuttgart</copyright>
-        <tags>native mmpld particles</tags>
+        <tags>native datraw dat raw volume volumetric</tags>
     </metadata>
     <files>
         <file src="datraw.h" target="build\native\include" />
