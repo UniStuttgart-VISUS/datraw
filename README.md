@@ -15,7 +15,7 @@ In principle, arbitrary properties can be stored. However, some properties have 
 | OBJECTFILENAME | String | The name(s) of the raw file(s). For a single raw file this is just the file name, for multiple raw files, forming for example a time-series, a the numbering is controlled by a format string. |
 | FORMAT | Enum | The format (or data type) of a single element of the tuples (i.e. the scalar type) |
 | GRIDTYPE | Enum | The type of grid the data is organised in. |
-| COMPONENTS | Integer | The number of components per tuple. |
+| COMPONENTS | Integer | The number N of components per tuple. |
 | DIMENSIONS | Integer | The dimensionality M of the grid. |
 | TIMESTEPS | Integer | The number of time steps/number of raw files (defaults to 1). |
 | BYTEORDER | Enum | The byte order the raw files are stored in; either LITTLE_ENDIAN (default) or BIG_ENDIAN. |
@@ -27,9 +27,28 @@ In principle, arbitrary properties can be stored. However, some properties have 
 The raw file stores binary data as an M-dimensional array of N-dimensional tuples. All elements of the tuple need to have the same type.
 
 ## Usage
-The library represents the dat file in the `info` class and provides access to the raw file(s) by means of the `raw_reader` class. The `raw_reader` can either be created from the path to a dat file or from an existing in-memory `info` instance.
+In order to use the library in your project, add the **datraw** folder to the list of `#include` directories. Add `#include "datraw.h"`. All other files are included via this file.
 
-All classes are templated with the character type (`char` or `wchar_t`) and located in the `datraw` namespace. 
+The library represents the dat file in the `info` class and provides access to the raw file(s) by means of the `raw_reader` class. The `raw_reader` can either be created from the path to a dat file or from an existing in-memory `info` instance. An `info` object can be parsed from the path to a dat file or from an in-memory string (e.g. if the data have been received from the network).
+
+All classes are templated with the character type (`char` or `wchar_t`) and are located in the `datraw` namespace.
+
+The following example shows the minimal example for iterating over all time steps in the data set described by "foot.dat":
+
+```C++
+#include "datraw.h"
+
+typedef datraw::raw_reader<char> reader;
+
+auto r = reader::open("foot.dat");
+while (r) {
+    std::vector<datraw::uint8> raw = r.read_current();
+    r.move_next();
+}
+```
+
+The variant with an explicit instance of the `info` class looks like:
+
 
 ```C++
 #include "datraw.h"
@@ -37,9 +56,28 @@ All classes are templated with the character type (`char` or `wchar_t`) and loca
 typedef datraw::info<char> info;
 typedef datraw::raw_reader<char> reader;
 
-reader r = reader::open("foot.dat");
-while (r) {
+auto info = info::load("foot.dat");
+reader r(info);
+for (std::uint64_t i = 0; i < info.time_steps(); ++i) {
+    r.move_to(i);
+    assert(r);
     std::vector<datraw::uint8> raw = r.read_current();
+}
+```
+
+There is a zero-copy overload of `raw_reader::read_current` which uses a user-provided buffer and returns the required buffer size. It can be used as follows:
+
+```C++
+#include "datraw.h"
+
+typedef datraw::raw_reader<char> reader;
+
+std::vector<datraw::uint8> frame;
+
+auto r = reader::open("foot.dat");
+while (r) {
+    frame.resize(reader.read_current(nullptr, 0));
+    reader.read_current(retval.data(), retval.size());
     r.move_next();
 }
 ```
