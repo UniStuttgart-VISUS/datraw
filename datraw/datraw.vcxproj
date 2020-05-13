@@ -176,6 +176,7 @@
     <None Include="datraw\info.inl" />
     <None Include="datraw\parse.inl" />
     <None Include="datraw\raw_reader.inl" />
+    <None Include="datraw\string.inl" />
     <None Include="datraw\variant.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

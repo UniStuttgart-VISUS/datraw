@@ -19,7 +19,7 @@ In principle, arbitrary properties can be stored. However, some properties have 
 | DIMENSIONS | Integer | The dimensionality M of the grid. |
 | TIMESTEPS | Integer | The number of time steps/number of raw files (defaults to 1). |
 | BYTEORDER | Enum | The byte order the raw files are stored in; either LITTLE_ENDIAN (default) or BIG_ENDIAN. |
-| DATAOFFSET | Integer | The offset in the raw file(s) where the actual data starts (defaults to 0). |
+| DATAOFFSET | Integer | The offset, in bytes, in the raw file(s) where the actual data starts (defaults to 0). |
 | RESOLUTION | Array of Integer | The resolution of the grid, i.e. the number of elements in each dimension. |
 | SLICETHICKNESS | Array of Float | The size of the grid cells in each direction/dimension (defaults to 1.0 for each dimension). |
 

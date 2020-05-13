@@ -1,5 +1,5 @@
 /// <copyright file="raw_reader.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-/// Copyright © 2017 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
+/// Copyright © 2017 - 2020 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
 /// </copyright>
 /// <author>Christoph Müller</author>
 
@@ -22,15 +22,31 @@ typename datraw::raw_reader<C>::size_type datraw::raw_reader<C>::read_current(
     ifstream_type stream(path, ifstream_type::ate | ifstream_type::binary);
     if (!stream.good()) {
         std::stringstream msg;
-        msg << "The raw file \"" << detail::narrow_string(path) 
+        msg << "The raw file \"" << detail::narrow_string(path)
             << "\" could not be opened." << std::ends;
         throw std::invalid_argument(msg.str());
     }
     auto retval = static_cast<size_t>(stream.tellg());
 
+    // Check and account for the data offset.
+    auto offset = this->datInfo.data_offset();
+    if (offset >= retval) {
+        std::stringstream msg;
+        msg << "The data offset " << offset << " is larger than the total "
+            << retval << " byte(s) in \"" << detail::narrow_string(path)
+            << "\"." << std::ends;
+        throw std::invalid_argument(msg.str());
+
+    } else {
+        retval -= static_cast<std::size_t>(offset);
+    }
+
+    // TODO: for cartesian and rectilinear grids, we could check the expected
+    // size of the data here.
+
     // Read the data if possible.
     if ((dst != nullptr) && (cntDst >= retval)) {
-        stream.seekg(0, ifstream_type::beg);
+        stream.seekg(offset, ifstream_type::beg);
         stream.read(static_cast<char *>(dst), cntDst);
 
         if (this->datInfo.requires_byte_swap()) {
