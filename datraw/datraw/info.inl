@@ -511,14 +511,7 @@ typename datraw::info<C>::string_type datraw::info<C>::multi_file_name(
         return tpl;
     }
 
-    std::vector<char_type> retval;
-    retval.resize(tpl.length()
-        + (std::max)(static_cast<int>(log10(this->time_steps())), minWidth)
-        + 2);
-
-    ::sprintf(retval.data(), tpl.c_str(), offset + stride * timeStep);
-
-    return retval.data();
+    return detail::format(tpl, offset + stride * timeStep);
 }
 
 

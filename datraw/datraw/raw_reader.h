@@ -44,7 +44,11 @@ namespace datraw {
         /// <summary>
         /// The type of input stream.
         /// </summary>
-        typedef std::basic_ifstream<char_type> ifstream_type;
+        /// <remarks>
+        /// Note that the input stream is alway working on chars (bytes) as we
+        /// are processing the raw files in binary mode.
+        /// </remarks>
+        typedef std::basic_ifstream<char> ifstream_type;
 
         /// <summary>
         /// The type used to represent a string.
