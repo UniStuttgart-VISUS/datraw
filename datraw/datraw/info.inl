@@ -422,7 +422,7 @@ void datraw::info<C>::check(void) {
 
         case datraw::grid_type::tetrahedral:
             {
-            typedef typename std::decay<decltype(this->vertices())>::type v_t;
+                typedef typename std::decay<decltype(this->vertices())>::type v_t;
                 auto& pn = info::property_vertices;
                 if (!this->contains(pn)) {
                     this->properties[pn] = static_cast<v_t>(0);
