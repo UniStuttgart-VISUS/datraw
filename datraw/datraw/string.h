@@ -1,5 +1,5 @@
 /// <copyright file="string.h" company="Visualisierungsinstitut der Universität Stuttgart">
-/// Copyright © 2017 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
+/// Copyright © 2017 - 2020 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
 /// </copyright>
 /// <author>Christoph Müller</author>
 
@@ -9,14 +9,36 @@
 #if (!defined(__GNUC__) || (__GNUC__ >= 5))
 #include <codecvt>
 #endif /* (!defined(__GNUC__) || (__GNUC__ >= 5)) */
+#if defined(_WIN32)
+#include <conio.h>
+#endif /* defined(_WIN32) */
 #include <cctype>
 #include <functional>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 
 namespace datraw {
 namespace detail {
+
+    /// <summary>
+    /// Perform printf-style formatting into a string object.
+    /// </summary>
+    /// <param name="fmt">The format string.</param>
+    /// <param name="args">The arguments to be formatted.</param>
+    /// <returns>The formatted string.</returns>
+    template<class... A>
+    std::string format(const std::string& fmt, A... args);
+
+    /// <summary>
+    /// Perform printf-style formatting into a string object.
+    /// </summary>
+    /// <param name="fmt">The format string.</param>
+    /// <param name="args">The arguments to be formatted.</param>
+    /// <returns>The formatted string.</returns>
+    template<class... A>
+    std::wstring format(const std::wstring& fmt, A... args);
 
     /// <summary>
     /// Ensure a narrow string.
@@ -32,19 +54,7 @@ namespace detail {
     /// </summary>
     /// <param name="str"></param>
     /// <returns></returns>
-    inline std::string narrow_string(const std::wstring& str) {
-#if (!defined(__GNUC__) || (__GNUC__ >= 5))
-        static std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-        return cvt.to_bytes(str);
-#else /* (!defined(__GNUC__) || (__GNUC__ >= 5)) */
-        std::string retval;
-        retval.reserve(str.size());
-        for (auto c : str) {
-            retval.push_back(c);
-        }
-        return retval;
-#endif /* (!defined(__GNUC__) || (__GNUC__ >= 5)) */
-    }
+    inline std::string narrow_string(const std::wstring& str);
 
     /// <summary>
     /// Answer an upper case-version of <paramref name="str" />.
@@ -95,5 +105,23 @@ namespace detail {
         return trim_left(trim_right(str));
     }
 
+    /// <summary>
+    /// Ensure a wide string.
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    inline std::wstring widen_string(const std::string& str);
+
+    /// <summary>
+    /// Ensure a wide string.
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    inline const std::wstring widen_string(const std::wstring& str) {
+        return str;
+    }
+
 } /* end namespace detail */
 } /* end namespace datraw */
+
+#include "datraw/string.inl"
