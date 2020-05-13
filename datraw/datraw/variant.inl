@@ -20,12 +20,12 @@ void datraw::detail::copy_to<C, T>::invoke(const type& v,
 template<class C, datraw::variant_type T>
 void datraw::detail::is_same<C, T>::invoke(type& v, const variant_type& rhs,
         bool& retval) {
-	typedef detail::variant_fwd_traits<C, T> traits;
-	assert(rhs.type() == T);
-	// Cf. https://stackoverflow.com/questions/3505713/c-template-compilation-error-expected-primary-expression-before-token
+    typedef detail::variant_fwd_traits<C, T> traits;
+    assert(rhs.type() == T);
+    // Cf. https://stackoverflow.com/questions/3505713/c-template-compilation-error-expected-primary-expression-before-token
     //retval = (v == rhs.template get<T>());
-	// New version of VS2017 cannot resolve the above any more ...
-	retval = (v == rhs.template get<traits::value_type>());
+    // New version of VS2017 cannot resolve the above any more ...
+    retval = (v == rhs.template get<traits::value_type>());
 }
 
 
