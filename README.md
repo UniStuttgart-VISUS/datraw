@@ -59,8 +59,25 @@ typedef datraw::raw_reader<char> reader;
 auto info = info::load("foot.dat");
 reader reader(info);
 for (std::uint64_t i = 0: i < info.time_steps(); ++i) {
+    reader.move_t(i);
     assert(reader);
     std::vector<datraw::uint8> raw = reader.read_current();
-    reader.move_next();
+}
+```
+
+There is a zero-copy overload of `raw_reader::read_current` which uses a user-provided buffer and returns the required buffer size. It can be used as follows:
+
+```C++
+#include "datraw.h"
+
+typedef datraw::raw_reader<char> reader;
+
+std::vector<datraw::uint8> frame;
+
+auto r = reader::open("foot.dat");
+while (r) {
+    frame.resize(reader.read_current(nullptr, 0));
+    reader.read_current(retval.data(), retval.size());
+    r.move_next();
 }
 ```
