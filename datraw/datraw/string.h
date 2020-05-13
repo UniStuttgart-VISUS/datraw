@@ -67,7 +67,7 @@ namespace detail {
     template<class S> inline S trim_left(const S& str) {
         auto end = str.cend();
         auto begin = std::find_if(str.cbegin(), end,
-            std::not1(std::ptr_fun<int, int>(std::isspace)));
+            [](int ch) { return !std::isspace(ch); });
         return S(begin, str.cend());
     }
 
@@ -80,7 +80,7 @@ namespace detail {
     /// <returns></returns>
     template<class S> inline S trim_right(const S& str) {
         auto end = std::find_if(str.crbegin(), str.crend(),
-            std::not1(std::ptr_fun<int, int>(std::isspace)));
+            [](int ch) { return !std::isspace(ch); });
         return S(str.cbegin(), end.base());
     }
 
