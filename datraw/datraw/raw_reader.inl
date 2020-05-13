@@ -33,8 +33,8 @@ typename datraw::raw_reader<C>::size_type datraw::raw_reader<C>::read_current(
     if (offset >= retval) {
         std::stringstream msg;
         msg << "The data offset " << offset << " is larger than the total "
-            << retval << " byte(s) in " << detail::narrow_string(path)
-            << std::ends;
+            << retval << " byte(s) in \"" << detail::narrow_string(path)
+            << "\"." << std::ends;
         throw std::invalid_argument(msg.str());
 
     } else {
