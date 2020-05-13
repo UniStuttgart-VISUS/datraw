@@ -31,7 +31,24 @@ In order to use the library in your project, add the **datraw** folder to the li
 
 The library represents the dat file in the `info` class and provides access to the raw file(s) by means of the `raw_reader` class. The `raw_reader` can either be created from the path to a dat file or from an existing in-memory `info` instance. An `info` object can be parsed from the path to a dat file or from an in-memory string (e.g. if the data have been received from the network).
 
-All classes are templated with the character type (`char` or `wchar_t`) and are located in the `datraw` namespace. 
+All classes are templated with the character type (`char` or `wchar_t`) and are located in the `datraw` namespace.
+
+The following example shows the minimal example for iterating over all time steps in the data set described by "foot.dat":
+
+```C++
+#include "datraw.h"
+
+typedef datraw::raw_reader<char> reader;
+
+auto r = reader::open("foot.dat");
+while (r) {
+    std::vector<datraw::uint8> raw = r.read_current();
+    r.move_next();
+}
+```
+
+The variant with an explicit instance of the `info` class looks like:
+
 
 ```C++
 #include "datraw.h"
@@ -39,9 +56,11 @@ All classes are templated with the character type (`char` or `wchar_t`) and are 
 typedef datraw::info<char> info;
 typedef datraw::raw_reader<char> reader;
 
-reader r = reader::open("foot.dat");
-while (r) {
-    std::vector<datraw::uint8> raw = r.read_current();
-    r.move_next();
+auto info = info::load("foot.dat");
+reader reader(info);
+for (std::uint64_t i = 0: i < info.time_steps(); ++i) {
+    assert(reader);
+    std::vector<datraw::uint8> raw = reader.read_current();
+    reader.move_next();
 }
 ```
