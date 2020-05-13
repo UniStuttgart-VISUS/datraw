@@ -58,7 +58,7 @@ typedef datraw::raw_reader<char> reader;
 
 auto info = info::load("foot.dat");
 reader reader(info);
-for (std::uint64_t i = 0: i < info.time_steps(); ++i) {
+for (std::uint64_t i = 0; i < info.time_steps(); ++i) {
     reader.move_t(i);
     assert(reader);
     std::vector<datraw::uint8> raw = reader.read_current();
