@@ -57,11 +57,11 @@ typedef datraw::info<char> info;
 typedef datraw::raw_reader<char> reader;
 
 auto info = info::load("foot.dat");
-reader reader(info);
+reader r(info);
 for (std::uint64_t i = 0; i < info.time_steps(); ++i) {
-    reader.move_t(i);
-    assert(reader);
-    std::vector<datraw::uint8> raw = reader.read_current();
+    r.move_to(i);
+    assert(r);
+    std::vector<datraw::uint8> raw = r.read_current();
 }
 ```
 
