@@ -1,6 +1,6 @@
 MIT License
 
-Copyright © 2017 - 2018 Visualisierungsinstitut der Universität Stuttgart.
+Copyright © 2017 - 2020 Visualisierungsinstitut der Universität Stuttgart.
 All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
