@@ -12,7 +12,7 @@ std::string datraw::detail::format(const std::string& fmt, A... args) {
     auto f = fmt.c_str();
 
 #if (defined(_MSC_VER) && (_MSC_VER >= 1400))
-    auto length = ::_cprintf(f, args...) + 1;
+    auto length = ::_scprintf(f, args...) + 1;
 #elif defined(_WIN32)
     auto length = ::_snprintf(nullptr, 0, f, args...) + 1;
 #else
@@ -41,7 +41,7 @@ std::wstring datraw::detail::format(const std::wstring& fmt, A... args) {
     auto f = fmt.c_str();
 
 #if (defined(_MSC_VER) && (_MSC_VER >= 1400))
-    auto length = ::_cwprintf(f, args...) + 1;
+    auto length = ::_scwprintf(f, args...) + 1;
 #elif defined(_WIN32)
     auto length = ::_snwprintf(nullptr, 0, f, args...) + 1;
 #else
