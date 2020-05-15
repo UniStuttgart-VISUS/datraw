@@ -42,7 +42,7 @@ std::wstring datraw::detail::format(const std::wstring& fmt, A... args) {
 
 #if defined(_WIN32)
 #if (defined(_MSC_VER) && (_MSC_VER >= 1400))
-    auto length = ::_cwprintf(f, args...) + 1;
+    auto length = ::_scwprintf(f, args...) + 1;
 #else /* (defined(_MSC_VER) && (_MSC_VER >= 1400)) */
     auto length = ::_snwprintf(nullptr, 0, f, args...) + 1;
 #endif /* (defined(_MSC_VER) && (_MSC_VER >= 1400)) */
