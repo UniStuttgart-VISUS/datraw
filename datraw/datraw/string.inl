@@ -40,24 +40,27 @@ template<class... A>
 std::wstring datraw::detail::format(const std::wstring& fmt, A... args) {
     auto f = fmt.c_str();
 
+#if defined(_WIN32)
 #if (defined(_MSC_VER) && (_MSC_VER >= 1400))
-    auto length = ::_scwprintf(f, args...) + 1;
-#elif defined(_WIN32)
+    auto length = ::_cwprintf(f, args...) + 1;
+#else /* (defined(_MSC_VER) && (_MSC_VER >= 1400)) */
     auto length = ::_snwprintf(nullptr, 0, f, args...) + 1;
-#else
-    // Note: this might be dangerous for string placeholders ...
-    return widen_string(format(narrow_string(fmt), args...));
-#endif
+#endif /* (defined(_MSC_VER) && (_MSC_VER >= 1400)) */
 
     std::vector<wchar_t> retval(length, '\0');
 
 #if (defined(_MSC_VER) && (_MSC_VER >= 1400))
     ::_snwprintf_s(retval.data(), length, length, f, args...);
-#elif defined(_WIN32)
+#else /* (defined(_MSC_VER) && (_MSC_VER >= 1400)) */
     ::_snwprintf(retval.data(), length, f, args...);
-#endif
+#endif /* (defined(_MSC_VER) && (_MSC_VER >= 1400)) */
 
     return retval.data();
+
+#else /* defined(_WIN32) */
+    // Note: this might be dangerous for string placeholders ...
+    return widen_string(format(narrow_string(fmt), args...));
+#endif /* defined(_WIN32) */
 }
 
 
