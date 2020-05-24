@@ -227,7 +227,7 @@ namespace datraw {
         /// Constant for the thickness of the slices.
         /// </summary>
         /// <remarks>
-        /// <para>Original documentation: Size of the grid cells in each 
+        /// <para>Original documentation: Size of the grid cells in each
         /// direction/dimension (M float values, dX dY dZ ...).</para>
         /// </remarks>
         static const string_type property_slice_thickness;
@@ -331,7 +331,7 @@ namespace datraw {
         /// This is equivalent to <see cref="record_size" />.
         /// </remarks>
         /// <returns>The size of an element or 0 in case of an error.</returns>
-        size_t element_size(void) const;
+        std::size_t element_size(void) const;
 
         /// <summary>
         /// Evaluate a path of a raw file as if it came from the dat file
@@ -441,14 +441,14 @@ namespace datraw {
         template<class I> void property_names(I oit) const;
 
         /// <summary>
-        /// Answer the size (in byte) of one data record of the data described
-        /// in this object.
+        /// Answer the size (in byte) of one data record of the data (voxel)
+        /// described in this object.
         /// </summary>
         /// <remarks>
         /// This is the legacy-named version of <see cref="element_size" />.
         /// </remarks>
         /// <returns>The size of an element or 0 in case of an error.</returns>
-        inline size_t record_size(void) const {
+        inline std::size_t record_size(void) const {
             return this->element_size();
         }
 
@@ -480,13 +480,13 @@ namespace datraw {
         /// </summary>
         /// <returns>The size of a single scalar or 0 in case of an error.
         /// </returns>
-        size_t scalar_size(void) const;
+        std::size_t scalar_size(void) const;
 
         /// <summary>
         /// Answer the number of properties stored in the object.
         /// </summary>
         /// <returns>The number of properties.</returns>
-        inline size_t size(void) const {
+        inline std::size_t size(void) const {
             return this->properties.size();
         }
 
@@ -494,11 +494,35 @@ namespace datraw {
         /// Gets the value of the well-known property named
         /// <see cref="property_slice_thickness" />.
         /// </summary>
+        /// <remarks>
+        /// <para>This property is only valid for Cartesian grids.</para>
+        /// </remarks>
         /// <returns>The distance between the voxels in each axis.</returns>
         /// <exception cref="std::out_of_range">If no such property was stored
         /// in the object.</exception>
         inline std::vector<float> slice_thickness(void) const {
             auto v = (*this)[info::property_slice_thickness];
+            return v.template get<std::vector<float>>();
+        }
+
+        /// <summary>
+        /// In case of <see cref="grid_type" /> being
+        /// <see cref="datraw::grid_type::rectilinear" />, answer the distances
+        /// between the slices on the specified axis, which is indexed starting
+        /// at 0.
+        /// </summary>
+        /// <remarks>
+        /// <para>This property is only valid for rectilinear grids.</para>
+        /// </remarks>
+        /// <param name="axis">The (zero-indexed) number of the axis to retrieve
+        /// the grid positions of.</param>
+        /// <returns>The distance between the slices in the specified axis.
+        /// </returns>
+        /// <exception cref="std::out_of_range">If no such property was stored
+        /// in the object.</exception>
+        inline std::vector<float> slice_thickness(
+                const std::uint32_t axis) const {
+            auto v = (*this)[info::format_slice_thickness(axis)];
             return v.template get<std::vector<float>>();
         }
 
@@ -576,6 +600,11 @@ namespace datraw {
             datraw::variant_type::vec_uint16, datraw::variant_type::vec_uint32,
             datraw::variant_type::vec_uint64, datraw::variant_type::vec_float32,
             datraw::variant_type::vec_float64> parsable_vectors_t;
+
+        /// <summary>
+        /// Format the slice thickness property for rectilinear grids.
+        /// </summary>
+        static string_type format_slice_thickness(const std::uint32_t axis);
 
         /// <summary>
         /// Answer whether <paramref name="c" /> is a valid directory separator.

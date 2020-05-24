@@ -13,6 +13,8 @@
 #include <conio.h>
 #endif /* defined(_WIN32) */
 #include <cctype>
+#include <cstdio>
+#include <cwchar>
 #include <functional>
 #include <stdexcept>
 #include <string>

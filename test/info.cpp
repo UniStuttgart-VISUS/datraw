@@ -146,6 +146,37 @@ Format:	USHORT\n\
                 Assert::IsTrue(i.byte_order() == datraw::endianness::little, L"Correct default byte order resolved.", LINE_INFO());
             }
 
+
+            {
+                auto input = DATRAW_TPL_LITERAL(C, "\
+    ObjectFileName: dummy.raw\r\n\
+    Resolution: 4 4 2\r\n\
+    SliceThickness: 1 2 3\r\n\
+    SliceThickness[0]: 1.1 1.2 1.3 1.4\r\n\
+    SliceThickness[1]: 2.1 2.2 2.3 2.4\r\n\
+    SliceThickness[2]: 3.1 3.2\r\n\
+    Format: UCHAR\r\n\
+    GridType: rectilinear\n\
+");
+                auto i = info::parse(input);
+                Assert::IsTrue(i.object_file_name() == DATRAW_TPL_LITERAL(C, "dummy.raw"), L"Object file name was parsed correctly.", LINE_INFO());
+                Assert::IsTrue(i.resolution().size() == 3, L"Sufficient resolution  parsed.", LINE_INFO());
+                Assert::IsTrue(i.resolution()[0] == 4, L"Correct resolution in x-direction parsed.", LINE_INFO());
+                Assert::IsTrue(i.resolution()[1] == 4, L"Correct resolution in y-direction parsed.", LINE_INFO());
+                Assert::IsTrue(i.resolution()[2] == 2, L"Correct resolution in z-direction parsed.", LINE_INFO());
+                Assert::IsFalse(i.contains(info::property_slice_thickness), L"Standard slicke thickness has been removed", LINE_INFO());
+                Assert::IsTrue(std::abs(i.slice_thickness(0)[0] - 1.1f) < 0.0001, L"Correct slice thickness [0] in x-direction parsed.", LINE_INFO());
+                Assert::IsTrue(std::abs(i.slice_thickness(0)[1] - 1.2f) < 0.0001, L"Correct slice thickness [0] in x-direction parsed.", LINE_INFO());
+                Assert::IsTrue(std::abs(i.slice_thickness(0)[2] - 1.3f) < 0.0001, L"Correct slice thickness [0] in x-direction parsed.", LINE_INFO());
+                Assert::IsTrue(std::abs(i.slice_thickness(1)[0] - 2.1f) < 0.0001, L"Correct slice thickness [0] in y-direction parsed.", LINE_INFO());
+                Assert::IsTrue(std::abs(i.slice_thickness(1)[1] - 2.2f) < 0.0001, L"Correct slice thickness [0] in y-direction parsed.", LINE_INFO());
+                Assert::IsTrue(std::abs(i.slice_thickness(1)[2] - 2.3f) < 0.0001, L"Correct slice thickness [0] in y-direction parsed.", LINE_INFO());
+                Assert::IsTrue(std::abs(i.slice_thickness(2)[0] - 3.1f) < 0.0001, L"Correct slice thickness [0] in z-direction parsed.", LINE_INFO());
+                Assert::IsTrue(std::abs(i.slice_thickness(2)[1] - 3.2f) < 0.0001, L"Correct slice thickness [0] in z-direction parsed.", LINE_INFO());
+                Assert::IsTrue(i.format() == datraw::scalar_type::uint8, L"Correct scalar format parsed.", LINE_INFO());
+                Assert::IsTrue(i.grid_type() == datraw::grid_type::rectilinear, L"Correct grid type parsed.", LINE_INFO());
+            }
+
         }
     };
 }
