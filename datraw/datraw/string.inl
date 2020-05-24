@@ -58,8 +58,15 @@ std::wstring datraw::detail::format(const std::wstring& fmt, A... args) {
     return retval.data();
 
 #else /* defined(_WIN32) */
-    // Note: this might be dangerous for string placeholders ...
-    return widen_string(format(narrow_string(fmt), args...));
+    auto length = static_cast<std::size_t>(1.5f * fmt.length());
+    std::vector<wchar_t> retval(length, L'\0');
+
+    while (::swprintf(retval.data(), retval.size(), fmt.c_str(), args...) < 0) {
+        length = static_cast<std::size_t>(1.5f * retval.size());
+        retval.resize(length);
+    }
+
+    return retval.data();
 #endif /* defined(_WIN32) */
 }
 
