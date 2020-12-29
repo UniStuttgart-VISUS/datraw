@@ -2,6 +2,7 @@
 # datraw
 
 [![Build Status](https://visualisierungsinstitut.visualstudio.com/datraw/_apis/build/status/UniStuttgart-VISUS.datraw?branchName=master)](https://visualisierungsinstitut.visualstudio.com/datraw/_build/latest?definitionId=5&branchName=master)
+![datraw Version](https://buildstats.info/nuget/datraw)
 
 This is a C++ header-only reimplementation of VIS's datraw library for volumetric data. The data sets are split in two files, the dat file containing a textual description of the data and the raw file which contains the actual volumetric data without any meta information.
 
@@ -22,6 +23,7 @@ In principle, arbitrary properties can be stored. However, some properties have 
 | DATAOFFSET | Integer | The offset, in bytes, in the raw file(s) where the actual data starts (defaults to 0). |
 | RESOLUTION | Array of Integer | The resolution of the grid, i.e. the number of elements in each dimension. |
 | SLICETHICKNESS | Array of Float | The size of the grid cells in each direction/dimension (defaults to 1.0 for each dimension). |
+| SLICETHICKNESS[a] | Array of Float | The distances between the grid cells on axis a for a rectilinear grid (defaults to 1.0 for all missing values). |
 
 ## The raw file
 The raw file stores binary data as an M-dimensional array of N-dimensional tuples. All elements of the tuple need to have the same type.
