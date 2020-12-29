@@ -66,28 +66,52 @@ namespace test {
         }
 
         TEST_METHOD(TestUcharToUint) {
-            std::array<unsigned char, 256> in;
-            std::array<unsigned int, 256> out;
+            {
+                std::array<unsigned char, 2> in = { 0, UCHAR_MAX };
+                std::array<unsigned int, 2> out;
 
-            std::iota(in.begin(), in.end(), 0);
+                datraw::convert(in.cbegin(), in.cend(), out.begin());
+                
+                Assert::AreEqual(unsigned int(0), out[0], L"Widening zero", LINE_INFO());
+                Assert::AreEqual(UINT_MAX, out[1], L"Widening max", LINE_INFO());
+            }
 
-            datraw::convert(in.cbegin(), in.cend(), out.begin());
+            {
+                std::array<unsigned char, 256> in;
+                std::array<unsigned int, 256> out;
 
-            for (size_t i = 0; i < out.size(); ++i) {
-                Assert::AreEqual((unsigned int) (double(in[i]) / UCHAR_MAX * UINT_MAX), out[i], L"Widening conversion.", LINE_INFO());
+                std::iota(in.begin(), in.end(), 0);
+
+                datraw::convert(in.cbegin(), in.cend(), out.begin());
+
+                for (size_t i = 0; i < out.size(); ++i) {
+                    Assert::AreEqual((unsigned int) (double(in[i]) / UCHAR_MAX * UINT_MAX), out[i], L"Widening conversion.", LINE_INFO());
+                }
             }
         }
 
         TEST_METHOD(TestUintToUchar) {
-            std::array<unsigned int, 256> in;
-            std::array<unsigned char, 256> out;
+            {
+                std::array<unsigned int, 2> in = { 0, UINT_MAX };
+                std::array<unsigned char, 2> out;
 
-            std::iota(in.begin(), in.end(), 0);
+                datraw::convert(in.cbegin(), in.cend(), out.begin());
 
-            datraw::convert(in.cbegin(), in.cend(), out.begin());
+                Assert::AreEqual(unsigned char(0), out[0], L"Narrowing zero", LINE_INFO());
+                Assert::AreEqual(unsigned char(UCHAR_MAX), out[1], L"Narrowing max", LINE_INFO());
+            }
 
-            for (size_t i = 0; i < out.size(); ++i) {
-                Assert::AreEqual((unsigned char) (double(in[i]) / UINT_MAX * UCHAR_MAX), out[i], L"Narrowing conversion.", LINE_INFO());
+            {
+                std::array<unsigned int, 256> in;
+                std::array<unsigned char, 256> out;
+
+                std::iota(in.begin(), in.end(), 0);
+
+                datraw::convert(in.cbegin(), in.cend(), out.begin());
+
+                for (size_t i = 0; i < out.size(); ++i) {
+                    Assert::AreEqual((unsigned char) (double(in[i]) / UINT_MAX * UCHAR_MAX), out[i], L"Narrowing conversion.", LINE_INFO());
+                }
             }
         }
 
