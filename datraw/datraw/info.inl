@@ -40,7 +40,7 @@ datraw::info<C> datraw::info<C>::load(const string_type& file) {
     }
 
     stream.seekg(0, std::ios::end);
-    content.reserve(static_cast<size_t>(stream.tellg()));
+    content.reserve(static_cast<std::size_t>(stream.tellg()));
     stream.seekg(0, std::ios::beg);
     content.assign((std::istreambuf_iterator<char_type>(stream)),
         std::istreambuf_iterator<char_type>());
@@ -69,19 +69,22 @@ datraw::info<C> datraw::info<C>::parse(const string_type& content,
         { info::property_grid_type, datraw::variant_type::grid_type },
         { info::property_object_file_name, detail::variant_rev_traits<C, string_type>::type },
         { info::property_origin, datraw::variant_type::vec_uint32 },
-        { info::property_resolution, datraw::variant_type::vec_uint32  },    // if (!(info->resolution = (int*)malloc(info->dimensions * sizeof(int)))) {
-        { info::property_slice_thickness, datraw::variant_type::vec_float32  },
+        { info::property_resolution, datraw::variant_type::vec_uint32 },    // if (!(info->resolution = (int*)malloc(info->dimensions * sizeof(int)))) {
+        { info::property_slice_thickness, datraw::variant_type::vec_float32 },
         { info::property_tetrahedra, datraw::variant_type::uint64 },
         { info::property_time_steps, datraw::variant_type::uint64 },
         { info::property_vertices, datraw::variant_type::uint64 },
     };
+    static const std::basic_regex<char_type> RX_RECTLNR_THICKNESS(
+        DATRAW_TPL_LITERAL(C, "^SLICETHICKNESS\\[([0-9]+)\\]$"),
+        std::regex::ECMAScript | std::regex::icase);
 
     datraw::info<C> retval;
 
     /* Parse the dat file. */
     auto lines = info::tokenise(content.cbegin(), content.cend(),
         DATRAW_TPL_LITERAL(C, '\r'), DATRAW_TPL_LITERAL(C, '\n'));
-    assert(lines.size() <= static_cast<size_t>(INT_MAX));
+    assert(lines.size() <= static_cast<std::size_t>(INT_MAX));
     for (int i = 0; i < static_cast<int>(lines.size()) - 1; ++i) {
         auto b = info::skip_spaces(lines[i], lines[i + 1]);
         auto e = lines[i + 1];
@@ -115,12 +118,21 @@ datraw::info<C> datraw::info<C>::parse(const string_type& content,
 
             /* Check whether we have a known or a custom property. */
             auto kp = detail::find_tag(KNOWN_PROPERTIES, ucKey);
+            std::match_results<typename string_type::const_iterator> matches;
             if (kp != nullptr) {
                 // This is one of the known properties which we might perform
                 // special handling for.
                 key = ucKey;
                 retval.properties[key] = info::parse(parsable_scalars_t(),
                     string_type(value, e), kp->Type);
+
+            } else if (std::regex_search(key, matches, RX_RECTLNR_THICKNESS)) {
+                // This are slice distances for a rectilinear grid.
+                auto axis = info::parse(parsable_scalars_t(), matches.str(1),
+                    datraw::variant_type::uint32);
+                key = info::format_slice_thickness(axis);
+                retval.properties[key] = info::parse(parsable_scalars_t(),
+                    string_type(value, e), datraw::variant_type::vec_float32);
 
             } else {
                 // This is a user-defined property. Store it as string.
@@ -325,10 +337,15 @@ void datraw::info<C>::check(void) {
         }
     }
 
-    if (this->grid_type() != datraw::grid_type::cartesian) {
-        throw std::runtime_error("Only Cartesian grids are supported at the "
-            "moment.");
-        // TODO: implement rectilinear grids.
+    /* Bail out if a grid type is not supported right now. */
+    switch (this->grid_type()) {
+        case datraw::grid_type::cartesian:
+        case datraw::grid_type::rectilinear:
+            break;
+
+        default:
+            throw std::runtime_error("The specified grid type is not supported "
+                "at the moment.");
     }
 
 #if 0
@@ -399,7 +416,7 @@ void datraw::info<C>::check(void) {
     switch (this->grid_type()) {
         case datraw::grid_type::cartesian:
         case datraw::grid_type::rectilinear:
-            /* Resolution is mandatory and must be set for each dimesnion. */
+            /* Resolution is mandatory and must be set for each dimension. */
             {
                 auto& pn = info::property_resolution;
                 if (!this->contains(pn)) {
@@ -437,6 +454,50 @@ void datraw::info<C>::check(void) {
             }
             break;
     }
+
+    /*
+     * Now that we know that the resolution is OK, we can check/fix the slice
+     * distances of the rectilinear grid.
+     */
+    if (this->grid_type() == grid_type::rectilinear) {
+        static const auto fmt = detail::literal_selector<C>::select("%s[%u]",
+            L"%S[%u]");
+        auto resolution = this->resolution();
+
+        // Make sure that the Cartesian slice distances are not present.
+        this->properties.erase(info::property_slice_thickness);
+
+        for (std::uint32_t i = 0; i < this->dimensions(); ++i) {
+            auto p = detail::format(fmt,
+                info::property_slice_thickness.c_str(), i);
+
+            try {
+                auto var = (*this)[p];
+                auto val = var.template get<std::vector<float>>();
+
+                if (val.size() < resolution[i]) {
+                    // Append default slice distances for missing dimensions.
+                    val.reserve(resolution[i]);
+                    while (val.size() < resolution[i]) {
+                        val.push_back(1.0f);
+                    }
+                    this->properties[p] = val;
+
+                } else if (val.size() > resolution[i]) {
+                    // There are too many slices, remove excess data.
+                    val.resize(resolution[i]);
+                    this->properties[p] = val;
+                }
+
+            } catch (...) {
+                // In case of an error (this should only happen if the slice
+                // distances are not set), apply a default value of equidistant
+                // slices for the axis.
+                std::vector<float> value(resolution[i], 1.0f);
+                this->properties[p] = value;
+            }
+        }
+    }
 }
 
 
@@ -444,7 +505,7 @@ void datraw::info<C>::check(void) {
  * datraw::info<C>::element_size
  */
 template<class C>
-size_t datraw::info<C>::element_size(void) const {
+std::size_t datraw::info<C>::element_size(void) const {
     try {
         return this->scalar_size() * this->dimensions();
     } catch (...) {
@@ -530,7 +591,7 @@ template<class I> void datraw::info<C>::property_names(I oit) const {
  * datraw::info<C>::scalar_size
  */
 template<class C>
-size_t datraw::info<C>::scalar_size(void) const {
+std::size_t datraw::info<C>::scalar_size(void) const {
     try {
         return datraw::get_scalar_size(this->format());
     } catch (...) {
@@ -570,6 +631,18 @@ const typename datraw::info<C>::variant_type& datraw::info<C>::operator [](
         throw std::out_of_range(msg.str());
     }
     return it->second;
+}
+
+
+/*
+ * datraw::info<C>::format_slice_thickness
+ */
+template<class C>
+typename datraw::info<C>::string_type datraw::info<C>::format_slice_thickness(
+        const std::uint32_t axis) {
+    static const auto FMT = detail::literal_selector<C>::select("%s[%u]",
+        L"%S[%u]");
+    return detail::format(FMT, info::property_slice_thickness.c_str(), axis);
 }
 
 
@@ -637,17 +710,16 @@ datraw::info<C>::parse_multi_file_description(const string_type& str,
         std::regex::ECMAScript | std::regex::icase);
 
     std::match_results<typename string_type::const_iterator> matches;
-    string_type strx = DATRAW_TPL_LITERAL(C, "data%03+1*2d.raw");
-    if (std::regex_search(strx, matches, RX)) {
+    if (std::regex_search(str, matches, RX)) {
         // This was a match, get the groups.
         auto strWidth = matches.str(2);
         width = strWidth.empty() ? 0 : datraw::parse<int>(strWidth);
 
         auto strSkip = matches.str(3);
-        skip = strWidth.empty() ? 0 : datraw::parse<int>(strWidth);
+        skip = strSkip.empty() ? 0 : datraw::parse<int>(strSkip);
 
         auto strStride = matches.str(4);
-        stride = strWidth.empty() ? 1 : datraw::parse<int>(strWidth);
+        stride = strStride.empty() ? 1 : datraw::parse<int>(strStride);
 
         auto retval = std::regex_replace(str, RX, matches.str(1)
             + DATRAW_TPL_LITERAL(C, "d"));
@@ -679,7 +751,7 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse_vec(
             DATRAW_TPL_LITERAL(C, ' '), DATRAW_TPL_LITERAL(C, '\t'));
         retval.reserve(tokens.size());
 
-        assert(tokens.size() <= static_cast<size_t>(INT_MAX));
+        assert(tokens.size() <= static_cast<std::size_t>(INT_MAX));
         for (int i = 0; i < static_cast<int>(tokens.size()) - 1; ++i) {
             auto b = info::skip_spaces(tokens[i], tokens[i + 1]);
             auto e = tokens[i + 1];
