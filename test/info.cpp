@@ -146,6 +146,33 @@ Format:	USHORT\n\
                 Assert::IsTrue(i.byte_order() == datraw::endianness::little, L"Correct default byte order resolved.", LINE_INFO());
             }
 
+            {
+                auto input = DATRAW_TPL_LITERAL(C, "\
+    ObjectFileName:	funs%05+0*100d\n\
+    TaggedFileName:	---\n\
+    Resolution: 256 256 256\n\
+    Format:	UCHAR\n\
+    TimeSteps: 8\n\
+");
+
+                auto i = info::parse(input);
+                Assert::IsTrue(i.object_file_name() == DATRAW_TPL_LITERAL(C, "funs%05+0*100d"), L"Object file name was parsed correctly.", LINE_INFO());
+                Assert::IsTrue(i.multi_file_name(0) == DATRAW_TPL_LITERAL(C, "funs000"), L"Multi-file 0.", LINE_INFO());
+                Assert::IsTrue(i.resolution().size() == 3, L"Sufficient resolution  parsed.", LINE_INFO());
+                Assert::IsTrue(i.resolution()[0] == 256, L"Correct resolution in x-direction parsed.", LINE_INFO());
+                Assert::IsTrue(i.resolution()[1] == 256, L"Correct resolution in y-direction parsed.", LINE_INFO());
+                Assert::IsTrue(i.resolution()[2] == 256, L"Correct resolution in z-direction parsed.", LINE_INFO());
+                Assert::IsTrue(i.slice_thickness().size() == 3, L"Sufficient slice thicknesses parsed.", LINE_INFO());
+                Assert::IsTrue(i.slice_thickness()[0] == 1, L"Correct slice thickness in x-direction parsed.", LINE_INFO());
+                Assert::IsTrue(i.slice_thickness()[1] == 1, L"Correct slice thickness in y-direction parsed.", LINE_INFO());
+                Assert::IsTrue(i.slice_thickness()[2] == 1, L"Correct slice thickness in z-direction parsed.", LINE_INFO());
+                Assert::IsTrue(i.format() == datraw::scalar_type::uint8, L"Correct scalar format parsed.", LINE_INFO());
+                Assert::IsTrue(i.grid_type() == datraw::grid_type::cartesian, L"Correct default grid type resolved.", LINE_INFO());
+                Assert::IsTrue(i.dimensions() == 3, L"Correct default dimension of data set resolved.", LINE_INFO());
+                Assert::IsTrue(i.components() == 1, L"Correct default number of components resolved.", LINE_INFO());
+                Assert::IsTrue(i.time_steps() == 8, L"Correct default number of time steps resolved.", LINE_INFO());
+                Assert::IsTrue(i.byte_order() == datraw::endianness::little, L"Correct default byte order resolved.", LINE_INFO());
+            }
         }
     };
 }
