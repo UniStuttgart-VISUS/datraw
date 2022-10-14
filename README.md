@@ -78,8 +78,8 @@ std::vector<datraw::uint8> frame;
 
 auto r = reader::open("foot.dat");
 while (r) {
-    frame.resize(reader.read_current(nullptr, 0));
-    reader.read_current(retval.data(), retval.size());
+    frame.resize(r.read_current(nullptr, 0));
+    r.read_current(frame.data(), frame.size());
     r.move_next();
 }
 ```

@@ -710,17 +710,16 @@ datraw::info<C>::parse_multi_file_description(const string_type& str,
         std::regex::ECMAScript | std::regex::icase);
 
     std::match_results<typename string_type::const_iterator> matches;
-    string_type strx = DATRAW_TPL_LITERAL(C, "data%03+1*2d.raw");
-    if (std::regex_search(strx, matches, RX)) {
+    if (std::regex_search(str, matches, RX)) {
         // This was a match, get the groups.
         auto strWidth = matches.str(2);
         width = strWidth.empty() ? 0 : datraw::parse<int>(strWidth);
 
         auto strSkip = matches.str(3);
-        skip = strWidth.empty() ? 0 : datraw::parse<int>(strWidth);
+        skip = strSkip.empty() ? 0 : datraw::parse<int>(strSkip);
 
         auto strStride = matches.str(4);
-        stride = strWidth.empty() ? 1 : datraw::parse<int>(strWidth);
+        stride = strStride.empty() ? 1 : datraw::parse<int>(strStride);
 
         auto retval = std::regex_replace(str, RX, matches.str(1)
             + DATRAW_TPL_LITERAL(C, "d"));
