@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>datraw</id>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
         <title>datraw</title>
         <authors>Christoph Müller</authors>
         <owners>mueller</owners>
@@ -11,8 +11,8 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>This library allows for reading volumetric data sets stored in the dat/raw format, which consists of a textual description of the data format in the dat file and the raw voxel data in one or more raw files.</description>
         <summary>A C++ header-only library for dat/raw volume data sets.</summary>
-        <releaseNotes>Fix for unwanted console output produced by raw_reader.</releaseNotes>
-        <copyright>Copyright © 2018 - 2020 Visualisierungsinstitut der Universität Stuttgart</copyright>
+        <releaseNotes>Fix for parting of multi-file expressions.</releaseNotes>
+        <copyright>Copyright © 2018 - 2022 Visualisierungsinstitut der Universität Stuttgart</copyright>
         <tags>native datraw dat raw volume volumetric</tags>
     </metadata>
     <files>
