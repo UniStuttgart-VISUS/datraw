@@ -1,7 +1,7 @@
-/// <copyright file="info.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-/// Copyright © 2017 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
-/// </copyright>
-/// <author>Christoph Müller</author>
+// <copyright file="info.inl" company="Visualisierungsinstitut der Universität Stuttgart">
+// Copyright © 2017 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
+// </copyright>
+// <author>Christoph Müller</author>
 
 
 /*
@@ -507,7 +507,7 @@ void datraw::info<C>::check(void) {
 template<class C>
 std::size_t datraw::info<C>::element_size(void) const {
     try {
-        return this->scalar_size() * this->dimensions();
+        return this->scalar_size() * this->components();
     } catch (...) {
         return 0;
     }

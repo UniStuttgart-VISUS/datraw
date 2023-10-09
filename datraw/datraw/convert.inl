@@ -1,7 +1,7 @@
-/// <copyright file="convert.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-/// Copyright © 2017 -2018 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
-/// </copyright>
-/// <author>Christoph Müller</author>
+// <copyright file="convert.inl" company="Visualisierungsinstitut der Universität Stuttgart">
+// Copyright © 2017 - 2023 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
+// </copyright>
+// <author>Christoph Müller</author>
 
 
 /*

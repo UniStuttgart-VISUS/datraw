@@ -1,7 +1,7 @@
-/// <copyright file="raw_reader.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-/// Copyright © 2017 - 2020 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
-/// </copyright>
-/// <author>Christoph Müller</author>
+// <copyright file="raw_reader.inl" company="Visualisierungsinstitut der Universität Stuttgart">
+// Copyright © 2017 - 2020 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
+// </copyright>
+// <author>Christoph Müller</author>
 
 
 /*
