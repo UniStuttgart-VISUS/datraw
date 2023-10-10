@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>datraw</id>
-        <version>1.0.7</version>
+        <version>1.0.8</version>
         <title>datraw</title>
         <authors>Christoph Müller</authors>
         <owners>mueller</owners>
@@ -11,7 +11,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>This library allows for reading volumetric data sets stored in the dat/raw format, which consists of a textual description of the data format in the dat file and the raw voxel data in one or more raw files.</description>
         <summary>A C++ header-only library for dat/raw volume data sets.</summary>
-        <releaseNotes>Fix for element_size/record_size being computed from dimensions insead of components.</releaseNotes>
+        <releaseNotes>Adds the ability to compute the row pitch of Cartesian data.</releaseNotes>
         <copyright>Copyright © 2018 - 2023 Visualisierungsinstitut der Universität Stuttgart</copyright>
         <tags>native datraw dat raw volume volumetric</tags>
     </metadata>
