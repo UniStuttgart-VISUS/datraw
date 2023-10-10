@@ -1,5 +1,5 @@
 // <copyright file="info.h" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2017 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
+// Copyright © 2017 - 2023 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
 // </copyright>
 // <author>Christoph Müller</author>
 
@@ -124,48 +124,48 @@ namespace datraw {
         /// </listheader>
         /// <item>
         ///     <term>CHAR</term>
-        ///     <description>8bit signed int</description>
+        ///     <description>8-bit signed int</description>
         /// </item>
         /// <item>
         ///     <term>UCHAR</term>
-        ///     <description>8bit unsigned int</description>
+        ///     <description>8-bit unsigned int</description>
         /// </item>
         /// <item>
         ///     <term>SHORT</term>
-        ///     <description>16bit signed int</description>
+        ///     <description>16-bit signed int</description>
         /// </item>
         /// <item>
         ///     <term>USHORT</term>
-        ///     <description>16bit unsigned int</description>
+        ///     <description>16-bit unsigned int</description>
         /// </item>
         /// <item>
         ///     <term>INT</term>
-        ///     <description>32bit signed int</description>
+        ///     <description>32-bit signed int</description>
         /// </item>
         /// <item>
         ///     <term>UINT</term>
-        ///     <description>32bit unsigned int</description>
+        ///     <description>32-bit unsigned int</description>
         /// </item>
         /// <item>
         ///     <term>LONG</term>
-        ///     <description>64bit signed int</description>
+        ///     <description>64-bit signed int</description>
         /// </item>
         /// <item>
         ///     <term>ULONG</term>
-        ///     <description>64bit unsigned int</description>
+        ///     <description>64-bit unsigned int</description>
         /// </item>
         /// <item>
         ///     <term>HALF</term>
-        ///     <description>16bit float format (1 sign bit 
+        ///     <description>16-bit float format (1 sign bit 
         /// + 5 bit exponent + 10 bit mantissa)</description>
         /// </item>
         /// <item>
         ///     <term>FLOAT</term>
-        ///     <description>32bit IEEE single float format</description>
+        ///     <description>32-bit IEEE single float format</description>
         /// </item>
         /// <item>
         ///     <term>DOUBLE</term>
-        ///     <description>64bit IEEE double float format</description>
+        ///     <description>64-bit IEEE double float format</description>
         /// </item>
         /// </list>
         /// </para>
@@ -476,6 +476,40 @@ namespace datraw {
         }
 
         /// <summary>
+        /// Answer the pitch of a row in the volume, in bytes, possibly aligned
+        /// to the specified number of bytes.
+        /// </summary>
+        /// <remarks>
+        /// <para>This method can only be called if the grid is organised in rows
+        /// like for Cartesian and rectilinear ones.</para>
+        /// <para>You can use this method to compute the row pitch of an aligned
+        /// copy of the volume, eg to match the alignment requirements of SIMD
+        /// operations. For instance, you can copy the raw volume using
+        /// <paramref name="alignment" /> equal to zero to another buffer that
+        /// has a more suitable alignment.</para>
+        /// </remarks>
+        /// <param name="alignment">The assumed alignment of the rows. If this
+        /// parameter is zero, which is the default, the result is equivalent to
+        /// <see cref="row_size" />. There is no requirement for the alignment
+        /// to be a power of two.</param>
+        /// <returns>The pitch of a row in bytes.</returns>
+        /// <exception cref="std::runtime_error">If the grid is not organised in
+        /// rows.</exception>
+        std::size_t row_pitch(const std::size_t alignment = 0) const;
+
+        /// <summary>
+        /// Answer the size of a single row of the volume in bytes.
+        /// </summary>
+        /// <remarks>
+        /// <para>This method can only be called if the grid is organised in rows
+        /// like for Cartesian and rectilinear ones.</para>
+        /// </remarks>
+        /// <returns>The size of a row in bytes.</returns>
+        /// <exception cref="std::runtime_error">If the grid is not organised in
+        /// rows.</exception>
+        std::size_t row_size(void) const;
+
+        /// <summary>
         /// Answer the size of a single scalar in bytes.
         /// </summary>
         /// <returns>The size of a single scalar or 0 in case of an error.
@@ -486,7 +520,7 @@ namespace datraw {
         /// Answer the number of properties stored in the object.
         /// </summary>
         /// <returns>The number of properties.</returns>
-        inline std::size_t size(void) const {
+        inline std::size_t size(void) const noexcept {
             return this->properties.size();
         }
 

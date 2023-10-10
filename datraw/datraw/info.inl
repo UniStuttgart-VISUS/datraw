@@ -1,5 +1,5 @@
 // <copyright file="info.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2017 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
+// Copyright © 2017 - 2023 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
 // </copyright>
 // <author>Christoph Müller</author>
 
@@ -583,6 +583,44 @@ template<class C>
 template<class I> void datraw::info<C>::property_names(I oit) const {
     for (auto& it : this->properties) {
         *oit++ = it.first;
+    }
+}
+
+
+/*
+ * datraw::info<C>::row_pitch
+ */
+template<class C>
+std::size_t datraw::info<C>::row_pitch(const std::size_t alignment) const {
+    auto retval = this->row_size();
+
+    if (alignment > 0) {
+        if (retval < alignment) {
+            retval = alignment;
+        } else {
+            retval += (retval % alignment);
+        }
+    }
+
+    return retval;
+}
+
+
+/*
+ * datraw::info<C>::row_size
+ */
+template<class C>
+std::size_t datraw::info<C>::row_size(void) const {
+    switch (this->grid_type()) {
+        case datraw::grid_type::cartesian:
+        case datraw::grid_type::rectilinear:
+            return this->resolution().empty()
+                ? 0
+                : this->resolution().front() * this->element_size();
+
+        default:
+            throw std::runtime_error("Only Cartesian and rectilinear grids are "
+                "organised in rows which the width can be computed of.");
     }
 }
 

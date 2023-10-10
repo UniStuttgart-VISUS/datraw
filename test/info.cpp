@@ -59,6 +59,9 @@ GridType: EQUIDISTANT\n\
                 Assert::IsTrue(i.components() == 1, L"Correct default number of components resolved.", LINE_INFO());
                 Assert::IsTrue(i.time_steps() == 1, L"Correct default number of time steps resolved.", LINE_INFO());
                 Assert::IsTrue(i.byte_order() == datraw::endianness::little, L"Correct default byte order resolved.", LINE_INFO());
+                Assert::AreEqual(std::size_t(256), i.row_size(), L"Computed correct row size.", LINE_INFO());
+                Assert::AreEqual(i.row_size(), i.row_pitch(), L"Computed correct row pitch.", LINE_INFO());
+                Assert::AreEqual(std::size_t(256), i.row_pitch(256), L"Computed correct aligned row pitch.", LINE_INFO());
             }
 
 
@@ -91,6 +94,9 @@ Components: 4\n\
                 Assert::IsTrue(i.dimensions() == 3, L"Correct default dimension of data set resolved.", LINE_INFO());
                 Assert::IsTrue(i.time_steps() == 1, L"Correct default number of time steps resolved.", LINE_INFO());
                 Assert::IsTrue(i.byte_order() == datraw::endianness::little, L"Correct default byte order resolved.", LINE_INFO());
+                Assert::AreEqual(std::size_t(288 * 4), i.row_size(), L"Computed correct row size.", LINE_INFO());
+                Assert::AreEqual(i.row_size(), i.row_pitch(), L"Computed correct row pitch.", LINE_INFO());
+                Assert::AreEqual(std::size_t(1280), i.row_pitch(256), L"Computed correct aligned row pitch.", LINE_INFO());
             }
 
             {
@@ -116,6 +122,10 @@ Format:	USHORT\n\
                 Assert::IsTrue(i.components() == 1, L"Correct default number of components resolved.", LINE_INFO());
                 Assert::IsTrue(i.time_steps() == 1, L"Correct default number of time steps resolved.", LINE_INFO());
                 Assert::IsTrue(i.byte_order() == datraw::endianness::little, L"Correct default byte order resolved.", LINE_INFO());
+                Assert::AreEqual(std::size_t(2048), i.row_size(), L"Computed correct row size.", LINE_INFO());
+                Assert::AreEqual(i.row_size(), i.row_pitch(), L"Computed correct row pitch.", LINE_INFO());
+                Assert::AreEqual(std::size_t(2048), i.row_pitch(256), L"Computed correct aligned row pitch.", LINE_INFO());
+
             }
 
             {
@@ -144,6 +154,10 @@ Format:	USHORT\n\
                 Assert::IsTrue(i.components() == 1, L"Correct default number of components resolved.", LINE_INFO());
                 Assert::IsTrue(i.time_steps() == 1, L"Correct default number of time steps resolved.", LINE_INFO());
                 Assert::IsTrue(i.byte_order() == datraw::endianness::little, L"Correct default byte order resolved.", LINE_INFO());
+                Assert::AreEqual(std::size_t(1024), i.row_size(), L"Computed correct row size.", LINE_INFO());
+                Assert::AreEqual(i.row_size(), i.row_pitch(), L"Computed correct row pitch.", LINE_INFO());
+                Assert::AreEqual(std::size_t(1024), i.row_pitch(256), L"Computed correct aligned row pitch.", LINE_INFO());
+
             }
 
             {
@@ -179,6 +193,9 @@ Format:	USHORT\n\
                 Assert::IsTrue(std::abs(i.slice_thickness(2)[1] - 3.2f) < 0.0001, L"Correct slice thickness [0] in z-direction parsed.", LINE_INFO());
                 Assert::IsTrue(i.format() == datraw::scalar_type::uint8, L"Correct scalar format parsed.", LINE_INFO());
                 Assert::IsTrue(i.grid_type() == datraw::grid_type::rectilinear, L"Correct grid type parsed.", LINE_INFO());
+                Assert::AreEqual(std::size_t(4), i.row_size(), L"Computed correct row size.", LINE_INFO());
+                Assert::AreEqual(i.row_size(), i.row_pitch(), L"Computed correct row pitch.", LINE_INFO());
+                Assert::AreEqual(std::size_t(256), i.row_pitch(256), L"Computed correct aligned row pitch.", LINE_INFO());
             }
 
             {
@@ -211,6 +228,10 @@ Format:	USHORT\n\
                 Assert::IsTrue(std::abs(i.slice_thickness(2)[1] - 1.0f) < 0.0001, L"Missing slice thickness [0] in z-direction is default.", LINE_INFO());
                 Assert::IsTrue(i.format() == datraw::scalar_type::uint8, L"Correct scalar format parsed.", LINE_INFO());
                 Assert::IsTrue(i.grid_type() == datraw::grid_type::rectilinear, L"Correct grid type parsed.", LINE_INFO());
+                Assert::AreEqual(std::size_t(4), i.row_size(), L"Computed correct row size.", LINE_INFO());
+                Assert::AreEqual(i.row_size(), i.row_pitch(), L"Computed correct row pitch.", LINE_INFO());
+                Assert::AreEqual(std::size_t(256), i.row_pitch(256), L"Computed correct aligned row pitch.", LINE_INFO());
+
             }
 
             {
@@ -240,6 +261,10 @@ Format:	USHORT\n\
                 Assert::IsTrue(i.components() == 1, L"Correct default number of components resolved.", LINE_INFO());
                 Assert::IsTrue(i.time_steps() == 8, L"Correct default number of time steps resolved.", LINE_INFO());
                 Assert::IsTrue(i.byte_order() == datraw::endianness::little, L"Correct default byte order resolved.", LINE_INFO());
+                Assert::AreEqual(std::size_t(256), i.row_size(), L"Computed correct row size.", LINE_INFO());
+                Assert::AreEqual(i.row_size(), i.row_pitch(), L"Computed correct row pitch.", LINE_INFO());
+                Assert::AreEqual(std::size_t(256), i.row_pitch(256), L"Computed correct aligned row pitch.", LINE_INFO());
+
             }
 
         }
