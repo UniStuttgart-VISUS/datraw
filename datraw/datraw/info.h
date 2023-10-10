@@ -704,7 +704,13 @@ namespace datraw {
         /// <summary>
         /// Answer the endianness of the system we are running on.
         /// </summary>
-        static datraw::endianness sys_endianness(void);
+        /// <remarks>
+        /// This method is provided for backwards compatibility. New code should
+        /// use <see cref="datraw::endianness::system" />.
+        /// </remarks>
+        static constexpr datraw::endianness sys_endianness(void) noexcept {
+            return endianness::system;
+        }
 
         /// <summmary>
         /// Split a range of characters at positions designated by

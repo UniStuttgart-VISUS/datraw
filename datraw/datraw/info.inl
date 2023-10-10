@@ -833,25 +833,6 @@ template<class I> I datraw::info<C>::skip_spaces(I it, I end) {
 
 
 /*
- * datraw::info<C>::sys_endianness
- */
-template<class C>
-datraw::endianness datraw::info<C>::sys_endianness(void) {
-    static const union {
-        std::uint32_t u;
-        std::uint8_t b[4];
-    } BYTES = { 0x01020304 };
-    
-    switch (BYTES.b[0]) {
-        case 0x01: return endianness::big;
-        case 0x04: return endianness::little;
-        default: throw std::runtime_error("Unknown endianness. This should "
-            "never happen!");
-    }
-}
-
-
-/*
  * datraw::info<C>::tokenise
  */
 template<class C>
