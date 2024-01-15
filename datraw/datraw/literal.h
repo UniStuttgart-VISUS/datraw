@@ -1,7 +1,8 @@
-// <copyright file="literal.h" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2017 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
+ï»¿// <copyright file="literal.h" company="Visualisierungsinstitut der UniversitÃ¤t Stuttgart">
+// Copyright Â© 2017 - 2024 Visualisierungsinstitut der UniversitÃ¤t Stuttgart.
+// Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
-// <author>Christoph Müller</author>
+// <author>Christoph MÃ¼ller</author>
 
 #pragma once
 
@@ -35,4 +36,7 @@ namespace detail {
 }
 }
 
+/// <summary>
+/// Yields a literal based on the template parameter <paramref name="T" />.
+/// </summary>
 #define DATRAW_TPL_LITERAL(T, l) datraw::detail::literal_selector<T>::select(l, L##l)

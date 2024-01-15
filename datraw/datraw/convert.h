@@ -1,7 +1,8 @@
-// <copyright file="convert.h" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2017 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
+ï»¿// <copyright file="convert.h" company="Visualisierungsinstitut der UniversitÃ¤t Stuttgart">
+// Copyright Â© 2017 - 2024 Visualisierungsinstitut der UniversitÃ¤t Stuttgart.
+// Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
-// <author>Christoph Müller</author>
+// <author>Christoph MÃ¼ller</author>
 
 #pragma once
 
@@ -10,6 +11,8 @@
 #include <cinttypes>
 #include <cstddef>
 #include <limits>
+
+#include "datraw/types.h"
 
 
 namespace datraw {
@@ -62,31 +65,12 @@ namespace datraw {
 
     /// <summary>
     /// Convert the byte order of <paramref name="cnt" /> numbers with a width
-    /// of <tparamref name="T" /> bytes.
-    /// </summary>
-    /// <remarks>
-    /// <para>This is the default case, which <b>does nothing</b>.</para>
-    /// <para>There are template specialisation for the data type sizes that are
-    /// supported for conversion.</para>
-    /// <para>The conversion is performed in-place.</para>
-    /// </remarks>
-    /// <tparam name="T">The size of an number in bytes, which must be
-    /// 1, 2, 4 or 8.</tparam>
-    /// <param name="data">A pointer to the data to be converted.</param>
-    /// <param name="cnt">The number of numbers designated by
-    /// <paramref name="data" />, which of each is <tparamref name="T" /> bytes
-    /// wide.</param>
-    template<size_t T>
-    inline void swap_byte_order(void *data, const size_t cnt) { }
-
-    /// <summary>
-    /// Convert the byte order of <paramref name="cnt" /> numbers with a width
     /// of 8 bytes each.
     /// </summary>
     /// <param name="data">A pointer to the data to be converted.</param>
     /// <param name="cnt">The number of numbers designated by
     /// <paramref name="data" />.</param>
-    template<> inline void swap_byte_order<8>(void *data, const size_t cnt);
+    inline void swap_byte_order(uint64 *data, const size_t cnt);
 
     /// <summary>
     /// Convert the byte order of <paramref name="cnt" /> numbers with a width
@@ -95,7 +79,7 @@ namespace datraw {
     /// <param name="data">A pointer to the data to be converted.</param>
     /// <param name="cnt">The number of numbers designated by
     /// <paramref name="data" />.</param>
-    template<> inline void swap_byte_order<4>(void *data, const size_t cnt);
+    inline void swap_byte_order(uint32 *data, const size_t cnt);
 
     /// <summary>
     /// Convert the byte order of <paramref name="cnt" /> numbers with a width
@@ -104,7 +88,7 @@ namespace datraw {
     /// <param name="data">A pointer to the data to be converted.</param>
     /// <param name="cnt">The number of numbers designated by
     /// <paramref name="data" />.</param>
-    template<> inline void swap_byte_order<2>(void *data, const size_t cnt);
+    inline void swap_byte_order(uint16 *data, const size_t cnt);
 
     /// <summary>
     /// Convert the byte order of <paramref name="cnt" /> numbers with a
@@ -117,7 +101,6 @@ namespace datraw {
     /// <paramref name="data" />.</param>
     inline void swap_byte_order(const size_t width, void *data,
         const size_t cnt);
-
 
 } /* end namespace datraw */
 

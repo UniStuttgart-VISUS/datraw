@@ -1,3 +1,9 @@
+﻿// <copyright file="format.cpp" company="Visualisierungsinstitut der Universität Stuttgart">
+// Copyright © 2017 - 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Licensed under the MIT licence. See LICENCE file for details.
+// </copyright>
+// <author>Christoph Müller</author>
+
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
