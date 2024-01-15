@@ -1,7 +1,8 @@
 #
 # azure-pipelines.yml
 #
-# Copyright © 2019 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
+# Copyright © 2019 - 2024 Visualisierungsinstitut der Universität Stuttgart.
+# Licensed under the MIT licence. See LICENCE file for details.
 #
 
 trigger:
@@ -41,3 +42,4 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    testAssemblyVer2: '**\Release\*test.dll'
