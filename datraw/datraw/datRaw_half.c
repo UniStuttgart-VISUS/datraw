@@ -1,3 +1,4 @@
+#if 0
 #include "datRaw_half.h"
 
 /* gcc 4.X bug, see datRaw_half.h */
@@ -135,4 +136,5 @@ DR_HALF floatToHalf(float val)
 	return (f_s << 15) | (h_e << 10) | h_m;
 	
 }
+#endif
 #endif

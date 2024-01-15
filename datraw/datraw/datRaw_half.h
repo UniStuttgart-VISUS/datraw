@@ -1,3 +1,4 @@
+#if 0
 #ifndef DATRAW_HALF_H
 #define DATRAW_HALF_H
 
@@ -179,4 +180,5 @@ extern __inline__ DR_HALF floatToHalf(float val)
 }
 #endif
 
+#endif
 #endif
