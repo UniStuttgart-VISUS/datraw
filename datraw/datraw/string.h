@@ -68,10 +68,13 @@ inline std::string narrow_string(const std::wstring& str);
 /// <param name="str"></param>
 /// <returns></returns>
 template<class S> inline S to_upper(S str) {
+    typedef typename S::value_type char_type;
     std::transform(str.begin(),
         str.end(),
         str.begin(),
-        [](const typename S::value_type c) { return std::toupper(c); });
+        [](const char_type c) {
+            return static_cast<char_type>(std::toupper(c));
+        });
     return str;
 }
 

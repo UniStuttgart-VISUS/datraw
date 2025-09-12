@@ -49,7 +49,10 @@ namespace test {
             std::array<unsigned char, 256> in;
             std::array<unsigned char, 256> out;
 
-            std::iota(in.begin(), in.end(), 0);
+            {
+                unsigned char n = 0;
+                std::generate(in.begin(), in.end(), [&](void) { return n++; });
+            }
 
             datraw::convert(in.cbegin(), in.cend(), out.begin());
 
@@ -62,7 +65,10 @@ namespace test {
             std::array<unsigned char, 256> in;
             std::array<float, 256> out;
 
-            std::iota(in.begin(), in.end(), 0);
+            {
+                unsigned char n = 0;
+                std::generate(in.begin(), in.end(), [&](void) { return n++; });
+            }
 
             datraw::convert(in.cbegin(), in.cend(), out.begin());
 
@@ -77,7 +83,7 @@ namespace test {
                 std::array<unsigned int, 2> out;
 
                 datraw::convert(in.cbegin(), in.cend(), out.begin());
-                
+
                 Assert::AreEqual(unsigned int(0), out[0], L"Widening zero", LINE_INFO());
                 Assert::AreEqual(UINT_MAX, out[1], L"Widening max", LINE_INFO());
             }
@@ -86,7 +92,10 @@ namespace test {
                 std::array<unsigned char, 256> in;
                 std::array<unsigned int, 256> out;
 
-                std::iota(in.begin(), in.end(), 0);
+                {
+                    unsigned char n = 0;
+                    std::generate(in.begin(), in.end(), [&](void) { return n++; });
+                }
 
                 datraw::convert(in.cbegin(), in.cend(), out.begin());
 

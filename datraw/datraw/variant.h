@@ -398,7 +398,7 @@ template<class C, variant_type T> struct cast_to {
 
     template<class U>
     static inline std::enable_if_t<!std::is_convertible<type, U>::value>
-    invoke(type& v, U& target) {
+    invoke(type&, U&) {
         throw std::bad_cast();
     }
 };
@@ -805,7 +805,7 @@ private:
     /// <tparam name="P">The parameter list for the functor.</tparam>
     template<template<class, variant_type> class F, class... P>
     inline void conditional_invoke0(detail::variant_type_list_t<>,
-        P&&... params) { }
+        P&&...) noexcept { }
 
     /// <summary>
     /// Clears the variant and (re-) constructs it as type

@@ -47,7 +47,11 @@ namespace test {
             typedef datraw::raw_reader<C> raw_reader;
 
             std::vector<std::uint8_t> expected(256 * 256 * 256);
-            std::generate(expected.begin(), expected.end(), std::rand);
+            std::generate(expected.begin(),
+                expected.end(),
+                [](void) {
+                    return static_cast<std::uint8_t>(std::rand() % 256);
+                });
 
             {
                 std::fstream stream("test.raw", std::ios::out
@@ -78,7 +82,11 @@ GridType: CARTESIAN\n\
             typedef datraw::raw_reader<C> raw_reader;
 
             std::vector<std::uint8_t> expected(8 + 256 * 256 * 256);
-            std::generate(expected.begin(), expected.end(), std::rand);
+            std::generate(expected.begin(),
+                expected.end(),
+                [](void) {
+                return static_cast<std::uint8_t>(std::rand() % 256);
+            });
 
             {
                 std::fstream stream("test.raw", std::ios::out
@@ -112,7 +120,11 @@ DataOffset: 8\n\
             typedef datraw::raw_reader<C> raw_reader;
 
             std::vector<std::uint8_t> expected(256 * 256 * 256);
-            std::generate(expected.begin(), expected.end(), std::rand);
+            std::generate(expected.begin(),
+                expected.end(),
+                [](void) {
+                return static_cast<std::uint8_t>(std::rand() % 256);
+            });
 
             {
                 std::fstream stream("test.raw", std::ios::out

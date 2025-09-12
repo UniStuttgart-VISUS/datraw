@@ -44,9 +44,9 @@ void DATRAW_NAMESPACE::convert(I begin, I end , O dst) {
     } else if (std::is_floating_point<S>::value) {
         // Conversion from [0, 1] to integral type.
         assert(!std::is_floating_point<T>::value);
-        auto tmin = static_cast<S>(std::numeric_limits<T>::lowest());
-        auto tmax = static_cast<S>((std::numeric_limits<T>::max)());
-        auto trange = tmax - tmin;
+        constexpr auto tmin = static_cast<S>(std::numeric_limits<T>::lowest());
+        constexpr auto tmax = static_cast<S>((std::numeric_limits<T>::max)());
+        auto trange = static_cast<S>(tmax - tmin);
 
         while (begin != end) {
             auto value = *begin++;
@@ -57,10 +57,14 @@ void DATRAW_NAMESPACE::convert(I begin, I end , O dst) {
 
     } else {
         // All other conversions require both data type ranges.
-        auto smin = static_cast<double>(std::numeric_limits<S>::lowest());
-        auto smax = static_cast<double>((std::numeric_limits<S>::max)());
-        auto tmin = static_cast<double>(std::numeric_limits<T>::lowest());
-        auto tmax = static_cast<double>((std::numeric_limits<T>::max)());
+        constexpr auto smin = static_cast<double>(
+            std::numeric_limits<S>::lowest());
+        constexpr auto smax = static_cast<double>(
+            (std::numeric_limits<S>::max)());
+        constexpr auto tmin = static_cast<double>(
+            std::numeric_limits<T>::lowest());
+        constexpr auto tmax = static_cast<double>(
+            (std::numeric_limits<T>::max)());
         auto srange = smax - smin;
         auto trange = tmax - tmin;
 

@@ -747,7 +747,7 @@ template<class C>
 typename DATRAW_NAMESPACE::info<C>::variant_type
 DATRAW_NAMESPACE::info<C>::parse(detail::variant_type_list_t<>,
         const string_type& str,
-        const DATRAW_NAMESPACE::variant_type type) {
+        const DATRAW_NAMESPACE::variant_type) {
     std::stringstream msg;
     msg << "\"" << detail::narrow_string(str) << "\" cannot be parsed into "
         "a variant.";
@@ -833,7 +833,7 @@ template<class C>
 typename DATRAW_NAMESPACE::info<C>::variant_type
 DATRAW_NAMESPACE::info<C>::parse_vec(detail::variant_type_list_t<>,
         const string_type& str,
-        const DATRAW_NAMESPACE::variant_type type) {
+        const DATRAW_NAMESPACE::variant_type) {
     std::stringstream msg;
     msg << "\"" << detail::narrow_string(str) << "\" cannot be parsed into "
         "a vector variant.";
