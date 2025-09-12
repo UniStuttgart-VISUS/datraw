@@ -74,5 +74,6 @@
     <None Include="datraw\string.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="datraw.nuspec" />
   </ItemGroup>
 </Project>

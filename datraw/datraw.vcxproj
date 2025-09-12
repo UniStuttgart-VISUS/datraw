@@ -173,6 +173,7 @@
     <ClInclude Include="datraw\variant.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="datraw.nuspec" />
     <None Include="datraw\convert.inl" />
     <None Include="datraw\info.inl" />
     <None Include="datraw\parse.inl" />
