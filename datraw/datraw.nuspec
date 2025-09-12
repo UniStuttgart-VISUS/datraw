@@ -6,12 +6,13 @@
         <title>datraw</title>
         <authors>Christoph Müller</authors>
         <owners>mueller</owners>
-        <licenseUrl>https://github.com/UniStuttgart-VISUS/datraw/blob/master/LICENCE.md</licenseUrl>
         <projectUrl>https://github.com/UniStuttgart-VISUS/datraw</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <license type="expression">MIT</license>
         <description>This library allows for reading volumetric data sets stored in the dat/raw format, which consists of a textual description of the data format in the dat file and the raw voxel data in one or more raw files.</description>
         <summary>A C++ header-only library for dat/raw volume data sets.</summary>
         <releaseNotes>Adds ABI versioning via an inline namespace.</releaseNotes>
+        <readme>docs\README.md</readme>
         <copyright>Copyright © 2018 - 2025 Visualisierungsinstitut der Universität Stuttgart</copyright>
         <tags>native datraw dat raw volume volumetric</tags>
     </metadata>
@@ -19,5 +20,6 @@
         <file src="datraw.h" target="build\native\include" />
         <file src="datraw\**" target="build\native\include\datraw" />
         <file src="datraw.targets" target="build\native\datraw.targets" />
+        <file src="..\README.md" target="docs\" />
     </files>
 </package>
