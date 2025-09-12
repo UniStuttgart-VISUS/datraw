@@ -1,24 +1,24 @@
 ﻿// <copyright file="string.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2020 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2020 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
 
 
 /*
- * datraw::detail::format
+ * DATRAW_DETAIL_NAMESPACE::format
  */
 template<class... A>
-std::string datraw::detail::format(const std::string& fmt, A... args) {
+std::string DATRAW_DETAIL_NAMESPACE::format(const std::string& fmt, A... args) {
     auto f = fmt.c_str();
 
 #if (defined(_MSC_VER) && (_MSC_VER >= 1400))
     auto length = ::_scprintf(f, args...) + 1;
 #elif defined(_WIN32)
     auto length = ::_snprintf(nullptr, 0, f, args...) + 1;
-#else
+#else /* (defined(_MSC_VER) && (_MSC_VER >= 1400)) */
     auto length = ::snprintf(nullptr, 0, f, args...) + 1;
-#endif
+#endif /* (defined(_MSC_VER) && (_MSC_VER >= 1400)) */
 
     std::vector<char> retval(length, '\0');
 
@@ -26,19 +26,20 @@ std::string datraw::detail::format(const std::string& fmt, A... args) {
     ::_snprintf_s(retval.data(), length, length, f, args...);
 #elif defined(_WIN32)
     ::_snprintf(retval.data(), length, f, args...);
-#else
+#else /* (defined(_MSC_VER) && (_MSC_VER >= 1400)) */
     ::snprintf(retval.data(), length, f, args...);
-#endif
+#endif /* (defined(_MSC_VER) && (_MSC_VER >= 1400)) */
 
     return retval.data();
 }
 
 
 /*
- * datraw::detail::format
+ * DATRAW_DETAIL_NAMESPACE::format
  */
 template<class... A>
-std::wstring datraw::detail::format(const std::wstring& fmt, A... args) {
+std::wstring DATRAW_DETAIL_NAMESPACE::format(const std::wstring& fmt,
+        A... args) {
     auto f = fmt.c_str();
 
 #if defined(_WIN32)
@@ -73,9 +74,9 @@ std::wstring datraw::detail::format(const std::wstring& fmt, A... args) {
 
 
 /*
- * datraw::detail::narrow_string
+ * DATRAW_DETAIL_NAMESPACE::narrow_string
  */
-std::string datraw::detail::narrow_string(const std::wstring& str) {
+std::string DATRAW_DETAIL_NAMESPACE::narrow_string(const std::wstring& str) {
 #if (!defined(__GNUC__) || (__GNUC__ >= 5))
     static std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
     return cvt.to_bytes(str);
@@ -91,9 +92,9 @@ std::string datraw::detail::narrow_string(const std::wstring& str) {
 
 
 /*
- * datraw::detail::widen_string
+ * DATRAW_DETAIL_NAMESPACE::widen_string
  */
-std::wstring datraw::detail::widen_string(const std::string& str) {
+std::wstring DATRAW_DETAIL_NAMESPACE::widen_string(const std::string& str) {
 #if (!defined(__GNUC__) || (__GNUC__ >= 5))
     static std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
     return cvt.from_bytes(str);

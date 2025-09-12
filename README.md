@@ -1,4 +1,4 @@
-
+﻿
 # datraw
 
 [![Build Status](https://visualisierungsinstitut.visualstudio.com/datraw/_apis/build/status/UniStuttgart-VISUS.datraw?branchName=master)](https://visualisierungsinstitut.visualstudio.com/datraw/_build/latest?definitionId=5&branchName=master)

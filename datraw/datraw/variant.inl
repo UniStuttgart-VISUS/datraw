@@ -74,7 +74,8 @@ datraw::basic_variant<C>& datraw::basic_variant<C>::operator =(
  * datraw::basic_variant<C>::operator ==
  */
 template<class C>
-bool datraw::basic_variant<C>::operator ==(const basic_variant& rhs) const {
+bool datraw::basic_variant<C>::operator ==(
+        const basic_variant& rhs) const noexcept {
     bool retval = (this == std::addressof(rhs));
 
     if (!retval && this->is(rhs.cur_type)) {

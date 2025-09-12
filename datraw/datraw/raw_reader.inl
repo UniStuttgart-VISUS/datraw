@@ -1,15 +1,16 @@
 ﻿// <copyright file="raw_reader.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2017 - 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2017 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
 
 
 /*
- * datraw::raw_reader<C>::read_current
+ * DATRAW_NAMESPACE::raw_reader<C>::read_current
  */
 template<class C>
-typename datraw::raw_reader<C>::size_type datraw::raw_reader<C>::read_current(
+typename DATRAW_NAMESPACE::raw_reader<C>::size_type
+DATRAW_NAMESPACE::raw_reader<C>::read_current(
         void *dst, const size_type cntDst) const {
     if (this->curTimeStep >= this->datInfo.time_steps()) {
         throw std::range_error("All time steps have been consumed already.");
@@ -62,7 +63,7 @@ typename datraw::raw_reader<C>::size_type datraw::raw_reader<C>::read_current(
                 throw std::invalid_argument(msg.str());
             }
 
-            datraw::swap_byte_order(ss, dst, retval / ss);
+            DATRAW_NAMESPACE::swap_byte_order(ss, dst, retval / ss);
         }
     }
 
@@ -72,11 +73,12 @@ typename datraw::raw_reader<C>::size_type datraw::raw_reader<C>::read_current(
 
 
 /*
- * datraw::raw_reader<C>::read_next
+ * DATRAW_NAMESPACE::raw_reader<C>::read_next
  */
 template<class C>
-std::vector<datraw::uint8> datraw::raw_reader<C>::read_next(void) const {
-    static const std::vector<datraw::uint8> EMPTY;
+std::vector<DATRAW_NAMESPACE::uint8>
+DATRAW_NAMESPACE::raw_reader<C>::read_next(void) const {
+    static const std::vector<DATRAW_NAMESPACE::uint8> EMPTY;
     if (this->move_next()) {
         return this->read_current();
     } else {

@@ -1,15 +1,15 @@
 ﻿// <copyright file="parse.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2017 - 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2017 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
 
 
 /*
- * datraw::detail::find_tag
+ * DATRAW_DETAIL_NAMESPACE::find_tag
  */
 template<class T, size_t N, class S>
-const T *datraw::detail::find_tag(const T(&tags)[N], const S& tag) {
+const T *DATRAW_DETAIL_NAMESPACE::find_tag(const T(&tags)[N], const S& tag) {
     for (size_t i = 0; i < N; ++i) {
         if (tags[i].Tag == tag) {
             return &tags[i];
@@ -21,11 +21,11 @@ const T *datraw::detail::find_tag(const T(&tags)[N], const S& tag) {
 
 
 /*
- * datraw::detail::parser<S, T>::parse
+ * DATRAW_DETAIL_NAMESPACE::parser<S, T>::parse
  */
 template<class S, class T>
-typename datraw::detail::parser<S, T>::value_type
-datraw::detail::parser<S, T>::parse(const string_type& str) {
+typename DATRAW_DETAIL_NAMESPACE::parser<S, T>::value_type
+DATRAW_DETAIL_NAMESPACE::parser<S, T>::parse(const string_type& str) {
     std::basic_stringstream<char_type> input(str);
     value_type retval;
 
@@ -41,11 +41,12 @@ datraw::detail::parser<S, T>::parse(const string_type& str) {
 
 
 /*
- * datraw::detail::parser<S, datraw::endianness>::parse
+ * DATRAW_DETAIL_NAMESPACE::parser<S, datraw::endianness>::parse
  */
 template<class S>
-typename datraw::detail::parser<S, datraw::endianness>::value_type
-datraw::detail::parser<S, datraw::endianness>::parse(const string_type& str) {
+typename DATRAW_DETAIL_NAMESPACE::parser<S, datraw::endianness>::value_type
+DATRAW_DETAIL_NAMESPACE::parser<S, datraw::endianness>::parse(
+        const string_type& str) {
     static const struct {
         string_type Tag;
         endianness Value;
@@ -68,11 +69,12 @@ datraw::detail::parser<S, datraw::endianness>::parse(const string_type& str) {
 
 
 /*
- * datraw::detail::parser<S, datraw::grid_type>::parse
+ * DATRAW_DETAIL_NAMESPACE::parser<S, datraw::grid_type>::parse
  */
 template<class S>
-typename datraw::detail::parser<S, datraw::grid_type>::value_type
-datraw::detail::parser<S, datraw::grid_type>::parse(const string_type& str) {
+typename DATRAW_DETAIL_NAMESPACE::parser<S, datraw::grid_type>::value_type
+DATRAW_DETAIL_NAMESPACE::parser<S, datraw::grid_type>::parse(
+        const string_type& str) {
     static const struct {
         string_type Tag;
         datraw::grid_type Value;
@@ -98,11 +100,12 @@ datraw::detail::parser<S, datraw::grid_type>::parse(const string_type& str) {
 
 
 /*
- * datraw::detail::parser<S, datraw::scalar_type>::parse
+ * DATRAW_DETAIL_NAMESPACE::parser<S, datraw::scalar_type>::parse
  */
 template<class S>
-typename datraw::detail::parser<S, datraw::scalar_type>::value_type
-datraw::detail::parser<S, datraw::scalar_type>::parse(const string_type& str) {
+typename DATRAW_DETAIL_NAMESPACE::parser<S, datraw::scalar_type>::value_type
+DATRAW_DETAIL_NAMESPACE::parser<S, datraw::scalar_type>::parse(
+        const string_type& str) {
     static const struct {
         string_type Tag;
         datraw::scalar_type Value;

@@ -1,15 +1,15 @@
 ﻿// <copyright file="convert.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2017 - 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2017 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
 
 
 /*
- * datraw::convert
+ * DATRAW_NAMESPACE::convert
  */
 template<class T, class I, class O>
-void datraw::convert(I begin, I end , O dst) {
+void DATRAW_NAMESPACE::convert(I begin, I end , O dst) {
     typedef typename I::value_type S;
 
     if (std::is_same<S, T>::value) {
@@ -76,9 +76,10 @@ void datraw::convert(I begin, I end , O dst) {
 
 
 /*
- * datraw::swap_byte_order
+ * DATRAW_NAMESPACE::swap_byte_order
  */
-void datraw::swap_byte_order(uint64 *data, const size_t cnt) {
+void DATRAW_NAMESPACE::swap_byte_order(uint64 *data, const std::size_t cnt) {
+    assert((data != nullptr) || (cnt == 0));
     for (size_t i = 0; i < cnt; i++) {
         auto v = data[i];
         auto sv = (v & 0x00000000000000FFULL);
@@ -95,9 +96,10 @@ void datraw::swap_byte_order(uint64 *data, const size_t cnt) {
 
 
 /*
- * datraw::swap_byte_order
+ * DATRAW_NAMESPACE::swap_byte_order
  */
-void datraw::swap_byte_order(uint32 *data, const size_t cnt) {
+void DATRAW_NAMESPACE::swap_byte_order(uint32 *data, const std::size_t cnt) {
+    assert((data != nullptr) || (cnt == 0));
     for (size_t i = 0; i < cnt; i++) {
         auto v = data[i];
         auto sv = (v & 0x000000FF);
@@ -110,12 +112,13 @@ void datraw::swap_byte_order(uint32 *data, const size_t cnt) {
 
 
 /*
- * datraw::swap_byte_order
+ * DATRAW_NAMESPACE::swap_byte_order
  */
-void datraw::swap_byte_order(uint16 *data, const size_t cnt) {
+void DATRAW_NAMESPACE::swap_byte_order(uint16 *data, const std::size_t cnt) {
+    assert((data != nullptr) || (cnt == 0));
     for (size_t i = 0; i < cnt; i++) {
         auto v = data[i];
-        auto sv = (v & 0x00FF);
+        auto sv = static_cast<uint16>(v & 0x00FF);
         sv = ((v & 0xFF00) >> 0x08) | (sv << 0x08);
         data[i] = sv;
     }
@@ -123,10 +126,10 @@ void datraw::swap_byte_order(uint16 *data, const size_t cnt) {
 
 
 /*
- * datraw::swap_byte_order
+ * DATRAW_NAMESPACE::swap_byte_order
  */
-void datraw::swap_byte_order(const size_t width, void *data,
-        const size_t cnt) {
+void DATRAW_NAMESPACE::swap_byte_order(const std::size_t width, void *data,
+        const std::size_t cnt) {
     switch (width) {
         case 8: swap_byte_order(static_cast<uint64 *>(data), cnt); break;
         case 4: swap_byte_order(static_cast<uint32 *>(data), cnt); break;

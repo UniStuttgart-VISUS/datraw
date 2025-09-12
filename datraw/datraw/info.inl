@@ -1,15 +1,16 @@
 ﻿// <copyright file="info.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2017 - 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2017 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
 
 
 /*
- * datraw::info<C>::is_multi_file_description
+ * DATRAW_NAMESPACE::info<C>::is_multi_file_description
  */
 template<class C>
-bool datraw::info<C>::is_multi_file_description(const string_type& str) {
+bool DATRAW_NAMESPACE::info<C>::is_multi_file_description(
+        const string_type& str) {
     // Direct adaption of Thomas Klein's code.
     static const auto MARKER = DATRAW_TPL_LITERAL(C, '%');
 
@@ -26,10 +27,11 @@ bool datraw::info<C>::is_multi_file_description(const string_type& str) {
 
 
 /*
- * datraw::info<C>::load
+ * DATRAW_NAMESPACE::info<C>::load
  */
 template<class C>
-datraw::info<C> datraw::info<C>::load(const string_type& file) {
+DATRAW_NAMESPACE::info<C> DATRAW_NAMESPACE::info<C>::load(
+        const string_type& file) {
     string_type content;
     std::basic_ifstream<char_type> stream(file);
 
@@ -52,35 +54,36 @@ datraw::info<C> datraw::info<C>::load(const string_type& file) {
 
 
 /*
- * datraw::info<C>::parse
+ * DATRAW_NAMESPACE::info<C>::parse
  */
 template<class C>
-datraw::info<C> datraw::info<C>::parse(const string_type& content,
+DATRAW_NAMESPACE::info<C> DATRAW_NAMESPACE::info<C>::parse(
+        const string_type& content,
         const string_type& file) {
     static const string_type EMPTY_STRING(DATRAW_TPL_LITERAL(C, ""));
     static const struct {
         string_type Tag;
-        datraw::variant_type Type;
+        DATRAW_NAMESPACE::variant_type Type;
     } KNOWN_PROPERTIES[] = {
-        { info::property_byte_order, datraw::variant_type::endianness },
-        { info::property_components, datraw::variant_type::uint32 },
-        { info::property_data_offset, datraw::variant_type::uint64 },
-        { info::property_dimensions, datraw::variant_type::uint32 },
-        { info::property_format,  datraw::variant_type::scalar_type },
-        { info::property_grid_type, datraw::variant_type::grid_type },
+        { info::property_byte_order, DATRAW_NAMESPACE::variant_type::endianness },
+        { info::property_components, DATRAW_NAMESPACE::variant_type::uint32 },
+        { info::property_data_offset, DATRAW_NAMESPACE::variant_type::uint64 },
+        { info::property_dimensions, DATRAW_NAMESPACE::variant_type::uint32 },
+        { info::property_format,  DATRAW_NAMESPACE::variant_type::scalar_type },
+        { info::property_grid_type, DATRAW_NAMESPACE::variant_type::grid_type },
         { info::property_object_file_name, detail::variant_rev_traits<C, string_type>::type },
-        { info::property_origin, datraw::variant_type::vec_uint32 },
-        { info::property_resolution, datraw::variant_type::vec_uint32 },    // if (!(info->resolution = (int*)malloc(info->dimensions * sizeof(int)))) {
-        { info::property_slice_thickness, datraw::variant_type::vec_float32 },
-        { info::property_tetrahedra, datraw::variant_type::uint64 },
-        { info::property_time_steps, datraw::variant_type::uint64 },
-        { info::property_vertices, datraw::variant_type::uint64 },
+        { info::property_origin, DATRAW_NAMESPACE::variant_type::vec_uint32 },
+        { info::property_resolution, DATRAW_NAMESPACE::variant_type::vec_uint32 },    // if (!(info->resolution = (int*)malloc(info->dimensions * sizeof(int)))) {
+        { info::property_slice_thickness, DATRAW_NAMESPACE::variant_type::vec_float32 },
+        { info::property_tetrahedra, DATRAW_NAMESPACE::variant_type::uint64 },
+        { info::property_time_steps, DATRAW_NAMESPACE::variant_type::uint64 },
+        { info::property_vertices, DATRAW_NAMESPACE::variant_type::uint64 },
     };
     static const std::basic_regex<char_type> RX_RECTLNR_THICKNESS(
         DATRAW_TPL_LITERAL(C, "^SLICETHICKNESS\\[([0-9]+)\\]$"),
         std::regex::ECMAScript | std::regex::icase);
 
-    datraw::info<C> retval;
+    DATRAW_NAMESPACE::info<C> retval;
 
     /* Parse the dat file. */
     auto lines = info::tokenise(content.cbegin(), content.cend(),
@@ -130,10 +133,10 @@ datraw::info<C> datraw::info<C>::parse(const string_type& content,
             } else if (std::regex_search(key, matches, RX_RECTLNR_THICKNESS)) {
                 // This are slice distances for a rectilinear grid.
                 auto axis = info::parse(parsable_scalars_t(), matches.str(1),
-                    datraw::variant_type::uint32);
+                    DATRAW_NAMESPACE::variant_type::uint32);
                 key = info::format_slice_thickness(axis);
                 retval.properties[key] = info::parse(parsable_scalars_t(),
-                    string_type(value, e), datraw::variant_type::vec_float32);
+                    string_type(value, e), DATRAW_NAMESPACE::variant_type::vec_float32);
 
             } else {
                 // This is a user-defined property. Store it as string.
@@ -156,114 +159,127 @@ datraw::info<C> datraw::info<C>::parse(const string_type& content,
 
 
 /*
- * datraw::info<C>::property_byte_order
+ * DATRAW_NAMESPACE::info<C>::property_byte_order
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_byte_order(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_byte_order(
     DATRAW_TPL_LITERAL(C, "BYTEORDER"));
 
 
 /*
- * datraw::info<C>::property_components
+ * DATRAW_NAMESPACE::info<C>::property_components
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_components(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_components(
     DATRAW_TPL_LITERAL(C, "COMPONENTS"));
 
 
 /*
- * datraw::info<C>::property_data_offset
+ * DATRAW_NAMESPACE::info<C>::property_data_offset
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_data_offset(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_data_offset(
     DATRAW_TPL_LITERAL(C, "DATAOFFSET"));
 
 
 /*
- * datraw::info<C>::property_dimensions
+ * DATRAW_NAMESPACE::info<C>::property_dimensions
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_dimensions(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_dimensions(
     DATRAW_TPL_LITERAL(C, "DIMENSIONS"));
 
 
 /*
- * datraw::info<C>::property_format
+ * DATRAW_NAMESPACE::info<C>::property_format
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_format(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_format(
     DATRAW_TPL_LITERAL(C, "FORMAT"));
 
 
 /*
- * datraw::info<C>::property_grid_type
+ * DATRAW_NAMESPACE::info<C>::property_grid_type
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_grid_type(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_grid_type(
     DATRAW_TPL_LITERAL(C, "GRIDTYPE"));
 
 
 /*
- * datraw::info<C>::property_object_file_name
+ * DATRAW_NAMESPACE::info<C>::property_object_file_name
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_object_file_name(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_object_file_name(
     DATRAW_TPL_LITERAL(C, "OBJECTFILENAME"));
 
 
 /*
- * datraw::info<C>::property_origin
+ * DATRAW_NAMESPACE::info<C>::property_origin
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_origin(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_origin(
     DATRAW_TPL_LITERAL(C, "ORIGIN"));
 
 
 /*
- * datraw::info<C>::property_resolution
+ * DATRAW_NAMESPACE::info<C>::property_resolution
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_resolution(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_resolution(
     DATRAW_TPL_LITERAL(C, "RESOLUTION"));
 
 
 /*
- * datraw::info<C>::property_slice_thickness
+ * DATRAW_NAMESPACE::info<C>::property_slice_thickness
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_slice_thickness(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_slice_thickness(
     DATRAW_TPL_LITERAL(C, "SLICETHICKNESS"));
 
 
 /*
- * datraw::info<C>::property_tetrahedra
+ * DATRAW_NAMESPACE::info<C>::property_tetrahedra
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_tetrahedra(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_tetrahedra(
     DATRAW_TPL_LITERAL(C, "TETRAHEDRA"));
 
 
 /*
- * datraw::info<C>::property_time_steps
+ * DATRAW_NAMESPACE::info<C>::property_time_steps
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_time_steps(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_time_steps(
     DATRAW_TPL_LITERAL(C, "TIMESTEPS"));
 
 
 /*
- * datraw::info<C>::property_vertices
+ * DATRAW_NAMESPACE::info<C>::property_vertices
  */
 template<class C>
-const typename datraw::info<C>::string_type datraw::info<C>::property_vertices(
+const typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::property_vertices(
     DATRAW_TPL_LITERAL(C, "VERTICES"));
 
 
 /*
- * datraw::info<C>::check
+ * DATRAW_NAMESPACE::info<C>::check
  */
 template<class C>
-void datraw::info<C>::check(void) {
+void DATRAW_NAMESPACE::info<C>::check(void) {
     /* Check fatal errors. */
     {
         auto& pn = info::property_object_file_name;
@@ -299,7 +315,7 @@ void datraw::info<C>::check(void) {
         auto& pn = info::property_byte_order;
         if (!this->contains(pn)) {
             // If byte order is not given, assume Intel (little endian).
-            this->properties[pn] = datraw::endianness::little;
+            this->properties[pn] = DATRAW_NAMESPACE::endianness::little;
         }
     }
 
@@ -307,7 +323,7 @@ void datraw::info<C>::check(void) {
         auto& pn = info::property_grid_type;
         if (!this->contains(pn)) {
             // If no grid is given, assume a Cartesian one.
-            this->properties[pn] = datraw::grid_type::cartesian;
+            this->properties[pn] = DATRAW_NAMESPACE::grid_type::cartesian;
         }
     }
 
@@ -340,8 +356,8 @@ void datraw::info<C>::check(void) {
 
     /* Bail out if a grid type is not supported right now. */
     switch (this->grid_type()) {
-        case datraw::grid_type::cartesian:
-        case datraw::grid_type::rectilinear:
+        case DATRAW_NAMESPACE::grid_type::cartesian:
+        case DATRAW_NAMESPACE::grid_type::rectilinear:
             break;
 
         default:
@@ -396,7 +412,7 @@ void datraw::info<C>::check(void) {
 #endif
 
     /* Check/fix errors depending on the grid type. */
-    if (this->grid_type() == datraw::grid_type::cartesian) {
+    if (this->grid_type() == DATRAW_NAMESPACE::grid_type::cartesian) {
         auto& pn = info::property_slice_thickness;
         if (!this->contains(pn)) {
             typename std::decay<decltype(this->slice_thickness())>::type v;
@@ -415,8 +431,8 @@ void datraw::info<C>::check(void) {
     }
 
     switch (this->grid_type()) {
-        case datraw::grid_type::cartesian:
-        case datraw::grid_type::rectilinear:
+        case DATRAW_NAMESPACE::grid_type::cartesian:
+        case DATRAW_NAMESPACE::grid_type::rectilinear:
             /* Resolution is mandatory and must be set for each dimension. */
             {
                 auto& pn = info::property_resolution;
@@ -438,7 +454,7 @@ void datraw::info<C>::check(void) {
             }
             break;
 
-        case datraw::grid_type::tetrahedral:
+        case DATRAW_NAMESPACE::grid_type::tetrahedral:
             {
                 typedef typename std::decay<decltype(this->vertices())>::type v_t;
                 auto& pn = info::property_vertices;
@@ -503,10 +519,10 @@ void datraw::info<C>::check(void) {
 
 
 /*
- * datraw::info<C>::element_size
+ * DATRAW_NAMESPACE::info<C>::element_size
  */
 template<class C>
-std::size_t datraw::info<C>::element_size(void) const {
+std::size_t DATRAW_NAMESPACE::info<C>::element_size(void) const {
     try {
         return this->scalar_size() * this->components();
     } catch (...) {
@@ -516,10 +532,10 @@ std::size_t datraw::info<C>::element_size(void) const {
 
 
 /*
- * datraw::info<C>::evaluate_path
+ * DATRAW_NAMESPACE::info<C>::evaluate_path
  */
 template<class C>
-typename datraw::info<C>::string_type datraw::info<C>::evaluate_path(
+typename DATRAW_NAMESPACE::info<C>::string_type DATRAW_NAMESPACE::info<C>::evaluate_path(
         const string_type& path) const {
     auto len = path.length();
     auto isAbsolute = false;
@@ -560,10 +576,10 @@ typename datraw::info<C>::string_type datraw::info<C>::evaluate_path(
 
 
 /*
- * datraw::info<C>::multi_file_name
+ * DATRAW_NAMESPACE::info<C>::multi_file_name
  */
 template<class C>
-typename datraw::info<C>::string_type datraw::info<C>::multi_file_name(
+typename DATRAW_NAMESPACE::info<C>::string_type DATRAW_NAMESPACE::info<C>::multi_file_name(
         const std::uint64_t timeStep) const {
     // Adapted directly from Thomas Klein's code.
     int minWidth, offset, stride;
@@ -578,10 +594,10 @@ typename datraw::info<C>::string_type datraw::info<C>::multi_file_name(
 
 
 /*
- * datraw::info<C>::property_names
+ * DATRAW_NAMESPACE::info<C>::property_names
  */
 template<class C>
-template<class I> void datraw::info<C>::property_names(I oit) const {
+template<class I> void DATRAW_NAMESPACE::info<C>::property_names(I oit) const {
     for (auto& it : this->properties) {
         *oit++ = it.first;
     }
@@ -589,10 +605,10 @@ template<class I> void datraw::info<C>::property_names(I oit) const {
 
 
 /*
- * datraw::info<C>::row_pitch
+ * DATRAW_NAMESPACE::info<C>::row_pitch
  */
 template<class C>
-std::size_t datraw::info<C>::row_pitch(const std::size_t alignment) const {
+std::size_t DATRAW_NAMESPACE::info<C>::row_pitch(const std::size_t alignment) const {
     auto retval = this->row_size();
 
     if (alignment > 0) {
@@ -608,13 +624,13 @@ std::size_t datraw::info<C>::row_pitch(const std::size_t alignment) const {
 
 
 /*
- * datraw::info<C>::row_size
+ * DATRAW_NAMESPACE::info<C>::row_size
  */
 template<class C>
-std::size_t datraw::info<C>::row_size(void) const {
+std::size_t DATRAW_NAMESPACE::info<C>::row_size(void) const {
     switch (this->grid_type()) {
-        case datraw::grid_type::cartesian:
-        case datraw::grid_type::rectilinear:
+        case DATRAW_NAMESPACE::grid_type::cartesian:
+        case DATRAW_NAMESPACE::grid_type::rectilinear:
             return this->resolution().empty()
                 ? 0
                 : this->resolution().front() * this->element_size();
@@ -627,12 +643,12 @@ std::size_t datraw::info<C>::row_size(void) const {
 
 
 /*
- * datraw::info<C>::scalar_size
+ * DATRAW_NAMESPACE::info<C>::scalar_size
  */
 template<class C>
-std::size_t datraw::info<C>::scalar_size(void) const {
+std::size_t DATRAW_NAMESPACE::info<C>::scalar_size(void) const {
     try {
-        return datraw::get_scalar_size(this->format());
+        return DATRAW_NAMESPACE::get_scalar_size(this->format());
     } catch (...) {
         return 0;
     }
@@ -640,16 +656,16 @@ std::size_t datraw::info<C>::scalar_size(void) const {
 
 
 /*
- * datraw::info<C>::operator []
+ * DATRAW_NAMESPACE::info<C>::operator []
  */
 template<class C>
-typename datraw::info<C>::variant_type& datraw::info<C>::operator [](
+typename DATRAW_NAMESPACE::info<C>::variant_type& DATRAW_NAMESPACE::info<C>::operator [](
         const string_type& prop) {
     auto it = this->properties.find(prop);
     if (it == this->properties.end()) {
         std::stringstream msg;
         msg << "Could not find property \"" << detail::narrow_string(prop)
-            << "\" in datraw::info.";
+            << "\" in DATRAW_NAMESPACE::info.";
         throw std::out_of_range(msg.str());
     }
     return it->second;
@@ -657,16 +673,16 @@ typename datraw::info<C>::variant_type& datraw::info<C>::operator [](
 
 
 /*
- * datraw::info<C>::operator []
+ * DATRAW_NAMESPACE::info<C>::operator []
  */
 template<class C>
-const typename datraw::info<C>::variant_type& datraw::info<C>::operator [](
+const typename DATRAW_NAMESPACE::info<C>::variant_type& DATRAW_NAMESPACE::info<C>::operator [](
         const string_type& prop) const {
     auto it = this->properties.find(prop);
     if (it == this->properties.end()) {
         std::stringstream msg;
         msg << "Could not find property \"" << detail::narrow_string(prop)
-            << "\" in datraw::info.";
+            << "\" in DATRAW_NAMESPACE::info.";
         throw std::out_of_range(msg.str());
     }
     return it->second;
@@ -674,10 +690,10 @@ const typename datraw::info<C>::variant_type& datraw::info<C>::operator [](
 
 
 /*
- * datraw::info<C>::format_slice_thickness
+ * DATRAW_NAMESPACE::info<C>::format_slice_thickness
  */
 template<class C>
-typename datraw::info<C>::string_type datraw::info<C>::format_slice_thickness(
+typename DATRAW_NAMESPACE::info<C>::string_type DATRAW_NAMESPACE::info<C>::format_slice_thickness(
         const std::uint32_t axis) {
     static const auto FMT = detail::literal_selector<C>::select("%s[%u]",
         L"%S[%u]");
@@ -686,34 +702,35 @@ typename datraw::info<C>::string_type datraw::info<C>::format_slice_thickness(
 
 
 /*
- * datraw::info<C>::parse
+ * DATRAW_NAMESPACE::info<C>::parse
  */
 template<class C>
-template<datraw::variant_type T, datraw::variant_type... Ts>
-typename datraw::info<C>::variant_type datraw::info<C>::parse(
-        detail::variant_type_list_t<T, Ts...>, const string_type& str,
-        const datraw::variant_type type) {
+template<DATRAW_NAMESPACE::variant_type T, DATRAW_NAMESPACE::variant_type... Ts>
+typename DATRAW_NAMESPACE::info<C>::variant_type
+DATRAW_NAMESPACE::info<C>::parse(detail::variant_type_list_t<T, Ts...>,
+        const string_type& str,
+        const DATRAW_NAMESPACE::variant_type type) {
     switch (type) {
-        case datraw::variant_type::string:
-        case datraw::variant_type::wstring:
+        case DATRAW_NAMESPACE::variant_type::string:
+        case DATRAW_NAMESPACE::variant_type::wstring:
             return str;
 
-        case datraw::variant_type::vec_int8:
-        case datraw::variant_type::vec_int16:
-        case datraw::variant_type::vec_int32:
-        case datraw::variant_type::vec_int64:
-        case datraw::variant_type::vec_uint8:
-        case datraw::variant_type::vec_uint16:
-        case datraw::variant_type::vec_uint32:
-        case datraw::variant_type::vec_uint64:
-        case datraw::variant_type::vec_float32:
-        case datraw::variant_type::vec_float64:
+        case DATRAW_NAMESPACE::variant_type::vec_int8:
+        case DATRAW_NAMESPACE::variant_type::vec_int16:
+        case DATRAW_NAMESPACE::variant_type::vec_int32:
+        case DATRAW_NAMESPACE::variant_type::vec_int64:
+        case DATRAW_NAMESPACE::variant_type::vec_uint8:
+        case DATRAW_NAMESPACE::variant_type::vec_uint16:
+        case DATRAW_NAMESPACE::variant_type::vec_uint32:
+        case DATRAW_NAMESPACE::variant_type::vec_uint64:
+        case DATRAW_NAMESPACE::variant_type::vec_float32:
+        case DATRAW_NAMESPACE::variant_type::vec_float64:
             // This is an array of space-separated items.
             return info::parse_vec(parsable_vectors_t(), str, type);
 
         case T:
             // This was a hit for the types in strstrm_parsables_t.
-            return datraw::parse<T>(str);
+            return DATRAW_NAMESPACE::parse<T>(str);
 
         default:
             // No hit, continue searching.
@@ -724,12 +741,13 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse(
 
 
 /*
- * datraw::info<C>::parse
+ * DATRAW_NAMESPACE::info<C>::parse
  */
 template<class C>
-typename datraw::info<C>::variant_type datraw::info<C>::parse(
-        detail::variant_type_list_t<>, const string_type& str,
-        const datraw::variant_type type) {
+typename DATRAW_NAMESPACE::info<C>::variant_type
+DATRAW_NAMESPACE::info<C>::parse(detail::variant_type_list_t<>,
+        const string_type& str,
+        const DATRAW_NAMESPACE::variant_type type) {
     std::stringstream msg;
     msg << "\"" << detail::narrow_string(str) << "\" cannot be parsed into "
         "a variant.";
@@ -738,11 +756,11 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse(
 
 
 /*
- * datraw::info<C>::parse_multi_file_description
+ * DATRAW_NAMESPACE::info<C>::parse_multi_file_description
  */
 template<class C>
-typename datraw::info<C>::string_type
-datraw::info<C>::parse_multi_file_description(const string_type& str,
+typename DATRAW_NAMESPACE::info<C>::string_type
+DATRAW_NAMESPACE::info<C>::parse_multi_file_description(const string_type& str,
         int& width, int& skip, int& stride) {
     static const std::basic_regex<char_type> RX(DATRAW_TPL_LITERAL(C,
         "(%(?:[0\\- ]([0-9]+))?)(?:\\+([0-9]+))?(?:\\*([0-9]+))?d"),
@@ -752,13 +770,13 @@ datraw::info<C>::parse_multi_file_description(const string_type& str,
     if (std::regex_search(str, matches, RX)) {
         // This was a match, get the groups.
         auto strWidth = matches.str(2);
-        width = strWidth.empty() ? 0 : datraw::parse<int>(strWidth);
+        width = strWidth.empty() ? 0 : DATRAW_NAMESPACE::parse<int>(strWidth);
 
         auto strSkip = matches.str(3);
-        skip = strSkip.empty() ? 0 : datraw::parse<int>(strSkip);
+        skip = strSkip.empty() ? 0 : DATRAW_NAMESPACE::parse<int>(strSkip);
 
         auto strStride = matches.str(4);
-        stride = strStride.empty() ? 1 : datraw::parse<int>(strStride);
+        stride = strStride.empty() ? 1 : DATRAW_NAMESPACE::parse<int>(strStride);
 
         auto retval = std::regex_replace(str, RX, matches.str(1)
             + DATRAW_TPL_LITERAL(C, "d"));
@@ -772,13 +790,14 @@ datraw::info<C>::parse_multi_file_description(const string_type& str,
 }
 
 /*
- * datraw::info<C>::parse_vec
+ * DATRAW_NAMESPACE::info<C>::parse_vec
  */
 template<class C>
-template<datraw::variant_type T, datraw::variant_type... Ts>
-typename datraw::info<C>::variant_type datraw::info<C>::parse_vec(
-        detail::variant_type_list_t<T, Ts...>, const string_type& str,
-        const datraw::variant_type type) {
+template<DATRAW_NAMESPACE::variant_type T, DATRAW_NAMESPACE::variant_type... Ts>
+typename DATRAW_NAMESPACE::info<C>::variant_type
+DATRAW_NAMESPACE::info<C>::parse_vec(detail::variant_type_list_t<T, Ts...>,
+        const string_type& str,
+        const DATRAW_NAMESPACE::variant_type type) {
     typedef typename detail::variant_fwd_traits<C, T>::value_type vector_type;
     typedef typename vector_type::value_type value_type;
 
@@ -795,7 +814,7 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse_vec(
             auto b = info::skip_spaces(tokens[i], tokens[i + 1]);
             auto e = tokens[i + 1];
             auto s = string_type(b, e);
-            retval.push_back(datraw::parse<value_type>(s));
+            retval.push_back(DATRAW_NAMESPACE::parse<value_type>(s));
         }
 
         return retval;
@@ -808,12 +827,13 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse_vec(
 
 
 /*
- * datraw::info<C>::parse_vec
+ * DATRAW_NAMESPACE::info<C>::parse_vec
  */
 template<class C>
-typename datraw::info<C>::variant_type datraw::info<C>::parse_vec(
-        detail::variant_type_list_t<>, const string_type& str,
-        const datraw::variant_type type) {
+typename DATRAW_NAMESPACE::info<C>::variant_type
+DATRAW_NAMESPACE::info<C>::parse_vec(detail::variant_type_list_t<>,
+        const string_type& str,
+        const DATRAW_NAMESPACE::variant_type type) {
     std::stringstream msg;
     msg << "\"" << detail::narrow_string(str) << "\" cannot be parsed into "
         "a vector variant.";
@@ -822,10 +842,10 @@ typename datraw::info<C>::variant_type datraw::info<C>::parse_vec(
 
 
 /*
- * datraw::info<C>::skip_spaces
+ * DATRAW_NAMESPACE::info<C>::skip_spaces
  */
 template<class C>
-template<class I> I datraw::info<C>::skip_spaces(I it, I end) {
+template<class I> I DATRAW_NAMESPACE::info<C>::skip_spaces(I it, I end) {
     while ((it != end) && std::isspace(*it)) {
         ++it;
     }
@@ -834,11 +854,12 @@ template<class I> I datraw::info<C>::skip_spaces(I it, I end) {
 
 
 /*
- * datraw::info<C>::tokenise
+ * DATRAW_NAMESPACE::info<C>::tokenise
  */
 template<class C>
 template<class I, class P>
-std::vector<I> datraw::info<C>::tokenise(I begin, I end, P predicate) {
+std::vector<I> DATRAW_NAMESPACE::info<C>::tokenise(I begin, I end,
+        P predicate) {
     auto cur = begin;
     std::vector<I> retval;
 
@@ -854,11 +875,12 @@ std::vector<I> datraw::info<C>::tokenise(I begin, I end, P predicate) {
 
 
 /*
- * datraw::info<C>::tokenise
+ * DATRAW_NAMESPACE::info<C>::tokenise
  */
 template<class C>
 template<class I, class... D>
-std::vector<I> datraw::info<C>::tokenise(I begin, I end, D... delimiters) {
+std::vector<I> DATRAW_NAMESPACE::info<C>::tokenise(I begin, I end,
+        D... delimiters) {
     typedef typename I::value_type char_type;
 
     std::vector<char_type> delims = { delimiters... };
