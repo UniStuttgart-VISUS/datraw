@@ -1,7 +1,8 @@
-/// <copyright file="info.inl" company="Visualisierungsinstitut der Universität Stuttgart">
-/// Copyright © 2017 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
-/// </copyright>
-/// <author>Christoph Müller</author>
+ï»¿// <copyright file="info.inl" company="Visualisierungsinstitut der UniversitÃ¤t Stuttgart">
+// Copyright Â© 2017 - 2024 Visualisierungsinstitut der UniversitÃ¤t Stuttgart.
+// Licensed under the MIT licence. See LICENCE file for details.
+// </copyright>
+// <author>Christoph MÃ¼ller</author>
 
 
 /*
@@ -507,7 +508,7 @@ void datraw::info<C>::check(void) {
 template<class C>
 std::size_t datraw::info<C>::element_size(void) const {
     try {
-        return this->scalar_size() * this->dimensions();
+        return this->scalar_size() * this->components();
     } catch (...) {
         return 0;
     }
@@ -583,6 +584,44 @@ template<class C>
 template<class I> void datraw::info<C>::property_names(I oit) const {
     for (auto& it : this->properties) {
         *oit++ = it.first;
+    }
+}
+
+
+/*
+ * datraw::info<C>::row_pitch
+ */
+template<class C>
+std::size_t datraw::info<C>::row_pitch(const std::size_t alignment) const {
+    auto retval = this->row_size();
+
+    if (alignment > 0) {
+        if (retval < alignment) {
+            retval = alignment;
+        } else {
+            retval += (retval % alignment);
+        }
+    }
+
+    return retval;
+}
+
+
+/*
+ * datraw::info<C>::row_size
+ */
+template<class C>
+std::size_t datraw::info<C>::row_size(void) const {
+    switch (this->grid_type()) {
+        case datraw::grid_type::cartesian:
+        case datraw::grid_type::rectilinear:
+            return this->resolution().empty()
+                ? 0
+                : this->resolution().front() * this->element_size();
+
+        default:
+            throw std::runtime_error("Only Cartesian and rectilinear grids are "
+                "organised in rows which the width can be computed of.");
     }
 }
 
@@ -710,17 +749,16 @@ datraw::info<C>::parse_multi_file_description(const string_type& str,
         std::regex::ECMAScript | std::regex::icase);
 
     std::match_results<typename string_type::const_iterator> matches;
-    string_type strx = DATRAW_TPL_LITERAL(C, "data%03+1*2d.raw");
-    if (std::regex_search(strx, matches, RX)) {
+    if (std::regex_search(str, matches, RX)) {
         // This was a match, get the groups.
         auto strWidth = matches.str(2);
         width = strWidth.empty() ? 0 : datraw::parse<int>(strWidth);
 
         auto strSkip = matches.str(3);
-        skip = strWidth.empty() ? 0 : datraw::parse<int>(strWidth);
+        skip = strSkip.empty() ? 0 : datraw::parse<int>(strSkip);
 
         auto strStride = matches.str(4);
-        stride = strWidth.empty() ? 1 : datraw::parse<int>(strWidth);
+        stride = strStride.empty() ? 1 : datraw::parse<int>(strStride);
 
         auto retval = std::regex_replace(str, RX, matches.str(1)
             + DATRAW_TPL_LITERAL(C, "d"));
@@ -792,25 +830,6 @@ template<class I> I datraw::info<C>::skip_spaces(I it, I end) {
         ++it;
     }
     return it;
-}
-
-
-/*
- * datraw::info<C>::sys_endianness
- */
-template<class C>
-datraw::endianness datraw::info<C>::sys_endianness(void) {
-    static const union {
-        std::uint32_t u;
-        std::uint8_t b[4];
-    } BYTES = { 0x01020304 };
-    
-    switch (BYTES.b[0]) {
-        case 0x01: return endianness::big;
-        case 0x04: return endianness::little;
-        default: throw std::runtime_error("Unknown endianness. This should "
-            "never happen!");
-    }
 }
 
 

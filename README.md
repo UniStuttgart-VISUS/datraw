@@ -2,7 +2,8 @@
 # datraw
 
 [![Build Status](https://visualisierungsinstitut.visualstudio.com/datraw/_apis/build/status/UniStuttgart-VISUS.datraw?branchName=master)](https://visualisierungsinstitut.visualstudio.com/datraw/_build/latest?definitionId=5&branchName=master)
-![datraw Version](https://buildstats.info/nuget/datraw)
+[![datraw Version](https://img.shields.io/nuget/v/datraw.svg)](https://www.nuget.org/packages/datraw)
+[![Vcpkg Port](https://www3.visus.uni-stuttgart.de/vcpkgstatus/datraw)](https://github.com/microsoft/vcpkg/tree/master/ports/datraw)
 
 This is a C++ header-only reimplementation of VIS's datraw library for volumetric data. The data sets are split in two files, the dat file containing a textual description of the data and the raw file which contains the actual volumetric data without any meta information.
 
@@ -78,8 +79,8 @@ std::vector<datraw::uint8> frame;
 
 auto r = reader::open("foot.dat");
 while (r) {
-    frame.resize(reader.read_current(nullptr, 0));
-    reader.read_current(retval.data(), retval.size());
+    frame.resize(r.read_current(nullptr, 0));
+    r.read_current(frame.data(), frame.size());
     r.move_next();
 }
 ```

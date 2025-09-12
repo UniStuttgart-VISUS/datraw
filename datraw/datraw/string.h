@@ -1,7 +1,8 @@
-/// <copyright file="string.h" company="Visualisierungsinstitut der Universität Stuttgart">
-/// Copyright © 2017 - 2020 Visualisierungsinstitut der Universität Stuttgart. Alle Rechte vorbehalten.
-/// </copyright>
-/// <author>Christoph Müller</author>
+ï»¿// <copyright file="string.h" company="Visualisierungsinstitut der UniversitÃ¤t Stuttgart">
+// Copyright Â© 2017 - 2024 Visualisierungsinstitut der UniversitÃ¤t Stuttgart.
+// Licensed under the MIT licence. See LICENCE file for details.
+// </copyright>
+// <author>Christoph MÃ¼ller</author>
 
 #pragma once
 
