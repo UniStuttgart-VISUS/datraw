@@ -18,14 +18,6 @@
 #include <intrin.h>
 #endif /* defined(_MSC_VER) */
 
-#if (defined(_M_IX86) || defined(_M_X64))
-#include <immintrin.h>
-#endif /* (defined(_M_IX86) || defined(_M_X64)) */
-
-#if (defined(_M_ARM) || defined(_M_ARM64) || defined(__aarch64__))
-#include <arm_neon.h>
-#endif /* (defined(_M_ARM) || defined(_M_ARM64) || defined(__aarch64__)) */
-
 #include "datraw/abi.h"
 
 
@@ -138,7 +130,10 @@ template<bool Arm, bool Intrinsic> struct half_converter final {
         const auto mantissa = bits.as_uint & UINT32_C(0x00000FFF);
         const auto value = exp + mantissa;
 
-        return (sign >> 16) | ((two > bias_mask) ? UINT16_C(0x7E00) : value);
+        const auto retval =  (sign >> 16)
+            | ((two > bias_mask) ? UINT16_C(0x7E00) : value);
+        assert(retval <= (std::numeric_limits<half_type>::max)());
+        return static_cast<half_type>(retval);
     }
 };
 
