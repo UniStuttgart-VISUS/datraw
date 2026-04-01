@@ -2,21 +2,23 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/datraw/.vs/datraw/v14
 /datraw/Win32
 /datraw/x64
+/datraw/ARM
+/datraw/ARM64
+/test/x64
+/test/Win32
+/test/ARM
+/test/ARM64
+/Win32
+/x64
+/ARM
+/ARM64
 *.db
 *.opendb
 /.vs/datraw/v14
-/t/Debug
-/test/Win32/Debug
-/Win32/Debug
-/Debug
 /ipch
-/test/x64
-/test/Win32
-/.vs/datraw/v15
-/Win32/Release
 /x64
 *.nupkg
 /.vs
+

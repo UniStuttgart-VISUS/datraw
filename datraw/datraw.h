@@ -1,5 +1,5 @@
 ﻿// <copyright file="datraw.h" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2017 - 2025 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2017 - 2026 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -10,6 +10,7 @@
 
 #include "datraw/convert.h"
 #include "datraw/endianness.h"
+#include "datraw/half.h"
 #include "datraw/info.h"
 #include "datraw/literal.h"
 #include "datraw/raw_reader.h"

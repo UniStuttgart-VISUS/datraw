@@ -10,7 +10,7 @@
 
 
 #define DATRAW_ABI_MAJOR 1
-#define DATRAW_ABI_MINOR 1
+#define DATRAW_ABI_MINOR 2
 
 
 #define _DATRAW_CONCAT0(l, r) l ## r
@@ -71,5 +71,12 @@
 /// Marks the end of the current namespace for implementation details.
 /// </summary>
 #define DATRAW_DETAIL_NAMESPACE_END } DATRAW_NAMESPACE_END
+
+
+#if defined(__cpp_if_constexpr)
+#define DATRAW_CONSTEXPR_IF constexpr
+#else /* defined(__cpp_if_constexpr) */
+#define DATRAW_CONSTEXPR_IF
+#endif /* defined(__cpp_if_constexpr) */
 
 #endif /* !defined(_DATRAW_ABI_H) */

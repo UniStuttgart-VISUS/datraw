@@ -12,7 +12,7 @@ template<class T, class I, class O>
 void DATRAW_NAMESPACE::convert(I begin, I end , O dst) {
     typedef typename I::value_type S;
 
-    if (std::is_same<S, T>::value) {
+    if DATRAW_CONSTEXPR_IF (std::is_same<S, T>::value) {
         // This is an identity transform.
 #pragma warning(push)
 #pragma warning(disable: 4244)
@@ -21,14 +21,14 @@ void DATRAW_NAMESPACE::convert(I begin, I end , O dst) {
         std::copy(begin, end, dst);
 #pragma warning(pop)
 
-    } else if (std::is_floating_point<S>::value
+    } else if DATRAW_CONSTEXPR_IF (std::is_floating_point<S>::value
             && std::is_floating_point<T>::value) {
         // Floating point conversion happens by simple cast, because we assume
         // floating point data sets to have values within [0, 1].
         std::transform(begin, end, dst,
             [](const S s) { return static_cast<T>(s); });
 
-    } else if (std::is_floating_point<T>::value) {
+    } else if DATRAW_CONSTEXPR_IF (std::is_floating_point<T>::value) {
         // Conversion from integral to [0, 1] floating point range.
         assert(!std::is_floating_point<S>::value);
         auto tmin = std::numeric_limits<S>::lowest();
@@ -41,7 +41,7 @@ void DATRAW_NAMESPACE::convert(I begin, I end , O dst) {
             *dst++ = value;
         }
 
-    } else if (std::is_floating_point<S>::value) {
+    } else if DATRAW_CONSTEXPR_IF (std::is_floating_point<S>::value) {
         // Conversion from [0, 1] to integral type.
         assert(!std::is_floating_point<T>::value);
         constexpr auto tmin = static_cast<S>(std::numeric_limits<T>::lowest());

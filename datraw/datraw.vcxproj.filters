@@ -54,6 +54,9 @@
     <ClInclude Include="datraw\abi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="datraw\half.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="datraw\info.inl">
