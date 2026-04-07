@@ -8,7 +8,9 @@
 #define _DATRAW_HALF_H
 #pragma once
 
+#include <cassert>
 #include <cinttypes>
+#include <cmath>
 #include <cstring>
 #include <cstdint>
 #include <limits>
